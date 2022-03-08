@@ -33,7 +33,13 @@ template<typename RandomAccessIterator, typename Compare>
 void merge_sort(RandomAccessIterator first,
                 RandomAccessIterator last,
                 Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
-
+    if (last <= first) {
+        return;
+    }
+    auto mid = first + std::distance(first, last)/2;
+    merge_sort(first, mid, comp);
+    merge_sort(mid, last, comp);
+    merge(first, mid, last, comp);
 }
 
 template<typename RandomAccessIterator, typename Compare>
