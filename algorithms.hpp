@@ -1,3 +1,6 @@
+#ifndef ALGORITHMS_HPP
+#define ALGORITHMS_HPP
+
 #include <vector>
 
 namespace alg {
@@ -34,3 +37,5 @@ void merge(RandomAccessIterator first,
 }
 
 }  // namespace alg
+
+#endif  // ALGORITHMS_HPP
