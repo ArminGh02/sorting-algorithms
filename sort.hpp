@@ -38,8 +38,8 @@ void merge_sort(RandomAccessIterator first,
     }
     auto mid = first + std::distance(first, last)/2;
     merge_sort(first, mid, comp);
-    merge_sort(mid, last, comp);
-    merge(first, mid, last, comp);
+    merge_sort(mid+1, last, comp);
+    merge(first, mid+1, last, comp);
 }
 
 template<typename RandomAccessIterator, typename Compare>
