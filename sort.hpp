@@ -1,3 +1,6 @@
+#ifndef SORT_HPP
+#define SORT_HPP
+
 #include <algorithm>
 
 namespace alg {
@@ -71,3 +74,5 @@ void bucket_sort(RandomAccessIterator first,
 }
 
 }  // namespace alg
+
+#endif  // SORT_HPP
