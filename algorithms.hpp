@@ -62,7 +62,7 @@ RandomAccessIterator partition(RandomAccessIterator first,
     }
 
     ++iter;
-    std::iter_swap(last - 1, iter);
+    std::iter_swap(--last, iter);
     return iter;
 }
 
