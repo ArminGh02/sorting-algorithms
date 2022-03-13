@@ -66,8 +66,8 @@ void quick_sort(const RandomAccessIterator first,
         return;
     }
     auto pivot = partition(first, last, comp);
-    quick_sort(first, pivot - 1, comp);
-    quick_sort(pivot + 1, last, comp);
+    quick_sort(first, pivot, comp);
+    quick_sort(++pivot, last, comp);
 }
 
 template<typename RandomAccessIterator, typename Compare>
