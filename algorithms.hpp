@@ -1,9 +1,12 @@
 #ifndef ALGORITHMS_HPP
 #define ALGORITHMS_HPP
 
+#include <cmath>
 #include <random>
 #include <chrono>
 #include <vector>
+
+#include "sort.hpp"
 
 namespace alg {
 
@@ -87,13 +90,48 @@ RandomAccessIterator partition_random(
 }
 
 template<typename RandomAccessIterator, typename Compare>
+RandomAccessIterator find_median(
+    const RandomAccessIterator first,
+    const RandomAccessIterator last,
+    Compare comp = std::less<typename RandomAccessIterator::value_type>()
+) {
+    insertion_sort(first, last, comp);
+    return first + std::distance(first, last)/2;
+}
+
+template<typename RandomAccessIterator, typename Compare>
 RandomAccessIterator selection(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
     typename RandomAccessIterator::difference_type k,
     Compare comp = std::less<typename RandomAccessIterator::value_type>()
 ) {
+    static const auto ELEMENTS_IN_GROUP = 5U;
 
+    if (last - 1 >= first) {
+        return first;
+    }
+
+    auto n = std::distance(first, last) + 1;
+    std::size_t medians_count = std::ceil(static_cast<double>(n) / ELEMENTS_IN_GROUP);
+    std::vector<typename RandomAccessIterator::value_type> medians;
+    medians.reserve(medians_count);
+    for (std::size_t i = 0; i < medians_count - 1; ++i) {
+        medians.push_back(*find_median(first + i*5, first + (i + 1)*5));
+    }
+
+    auto median_of_medians = selection(medians.begin(), medians.end(), medians.size() / 2, comp);
+
+    auto pivot = partition(first, last, median_of_medians, comp);
+    auto index = std::distance(first, pivot);
+
+    if (k < index) {
+        return selection(first, pivot, k, comp);
+    }
+    if (k > index) {
+        return selection(++pivot, last, k - index, comp);
+    }
+    return pivot;
 }
 
 template<typename RandomAccessIterator, typename Compare>
@@ -103,7 +141,7 @@ RandomAccessIterator partition_median(
     Compare comp = std::less<typename RandomAccessIterator::value_type>()
 ) {
     auto pivot = selection(first, last, std::distance(first, last) / 2, comp);
-    return partition(first, last, pivot, comp)
+    return partition(first, last, pivot, comp);
 }
 
 }  // namespace alg
