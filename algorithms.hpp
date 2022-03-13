@@ -12,6 +12,7 @@ void merge(RandomAccessIterator first,
            Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
     std::vector<typename RandomAccessIterator::value_type> temp;
     temp.reserve(std::distance(first, last) + 1);
+
     auto left = first;
     auto right = mid;
     while (left < mid && right <= last) {
@@ -49,7 +50,9 @@ RandomAccessIterator partition(RandomAccessIterator first,
                                RandomAccessIterator last,
                                Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
     auto median = selection(first, last, std::distance(first, last) / 2, comp);
+
     std::iter_swap(median, last - 1);
+
     auto left = first - 1;
     auto right = first;
     for (; right != last; ++right) {
@@ -58,6 +61,7 @@ RandomAccessIterator partition(RandomAccessIterator first,
             std::iter_swap(*right, *left);
         }
     }
+
     ++left;
     std::iter_swap(last - 1, left);
     return left;
