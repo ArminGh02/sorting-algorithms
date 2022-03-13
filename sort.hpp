@@ -49,7 +49,7 @@ template<typename RandomAccessIterator, typename Compare>
 void merge_sort(const RandomAccessIterator first,
                 const RandomAccessIterator last,
                 Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
-    if (last <= first) {
+    if (last - 1 <= first) {
         return;
     }
     auto mid = first + std::distance(first, last)/2;
@@ -62,7 +62,7 @@ template<typename RandomAccessIterator, typename Compare>
 void quick_sort(const RandomAccessIterator first,
                 const RandomAccessIterator last,
                 Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
-    if (last <= first) {
+    if (last - 1 <= first) {
         return;
     }
     auto pivot = partition_median(first, last, comp);
@@ -74,9 +74,10 @@ template<typename BidirectionalIterator, typename Compare>
 void quick_sort(const BidirectionalIterator first,
                 const BidirectionalIterator last,
                 Compare comp = std::less<typename BidirectionalIterator::value_type>()) {
-    if (last <= first) {
+    if (--last <= first) {
         return;
     }
+    ++last;
     auto pivot = partition_pivot_last(first, last, comp);
     quick_sort(first, pivot, comp);
     quick_sort(++pivot, last, comp);
