@@ -7,15 +7,16 @@
 
 namespace alg {
 
-template<typename RandomAccessIterator, typename Compare>
-void bubble_sort(RandomAccessIterator first,
-                 RandomAccessIterator last,
-                 Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
+template<typename BidirectionalIterator, typename Compare>
+void bubble_sort(BidirectionalIterator first,
+                 BidirectionalIterator last,
+                 Compare comp = std::less<typename BidirectionalIterator::value_type>()) {
     if (first == last) {
         return;
     }
     for (; first != last - 1; ++first) {
-        for (auto iter = first + 1; iter != last; ++iter) {
+        auto iter = first;
+        for (++iter; iter != last; ++iter) {
             if (comp(*iter, *first)) {
                 std::iter_swap(iter, first);
             }
