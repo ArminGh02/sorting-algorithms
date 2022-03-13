@@ -81,6 +81,7 @@ RandomAccessIterator partition_random(
 ) {
     static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<> dist(0, std::distance(first, last));
+
     auto pivot = first + dist(gen);
     return partition(first, last, pivot, comp);
 }
