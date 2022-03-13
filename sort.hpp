@@ -3,6 +3,8 @@
 
 #include <algorithm>
 
+#include "algorithms.hpp"
+
 namespace alg {
 
 template<typename RandomAccessIterator, typename Compare>
@@ -23,7 +25,7 @@ void insertion_sort(RandomAccessIterator first,
                     RandomAccessIterator last,
                     Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
     for (auto iter1 = first + 1; iter1 != last; ++first) {
-        auto key = *iter1;
+        const auto& key = *iter1;
         auto iter2 = iter1 - 1;
         for (; iter2 >= first && comp(key, *iter2); --iter2) {
             *(iter2 + 1) = *iter2;
@@ -41,15 +43,20 @@ void merge_sort(RandomAccessIterator first,
     }
     auto mid = first + std::distance(first, last)/2;
     merge_sort(first, mid, comp);
-    merge_sort(mid+1, last, comp);
-    merge(first, mid+1, last, comp);
+    merge_sort(mid + 1, last, comp);
+    merge(first, mid + 1, last, comp);
 }
 
 template<typename RandomAccessIterator, typename Compare>
 void quick_sort(RandomAccessIterator first,
                 RandomAccessIterator last,
                 Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
-
+    if (last <= first) {
+        return;
+    }
+    auto pivot = partition(first, last, comp);
+    quick_sort(first, pivot - 1, comp);
+    quick_sort(pivot + 1, last, comp);
 }
 
 template<typename RandomAccessIterator, typename Compare>
