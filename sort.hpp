@@ -65,7 +65,19 @@ void quick_sort(const RandomAccessIterator first,
     if (last <= first) {
         return;
     }
-    auto pivot = partition(first, last, comp);
+    auto pivot = partition_median(first, last, comp);
+    quick_sort(first, pivot, comp);
+    quick_sort(++pivot, last, comp);
+}
+
+template<typename BidirectionalIterator, typename Compare>
+void quick_sort(const BidirectionalIterator first,
+                const BidirectionalIterator last,
+                Compare comp = std::less<typename BidirectionalIterator::value_type>()) {
+    if (last <= first) {
+        return;
+    }
+    auto pivot = partition_pivot_last(first, last, comp);
     quick_sort(first, pivot, comp);
     quick_sort(++pivot, last, comp);
 }
