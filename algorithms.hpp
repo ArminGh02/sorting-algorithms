@@ -53,18 +53,17 @@ RandomAccessIterator partition(RandomAccessIterator first,
 
     std::iter_swap(median, last - 1);
 
-    auto left = first - 1;
-    auto right = first;
-    for (; right != last; ++right) {
-        if (comp(*right, *median)) {
-            ++left;
-            std::iter_swap(*right, *left);
+    auto iter = first - 1;
+    for (; first != last; ++first) {
+        if (comp(*first, *median)) {
+            ++iter;
+            std::iter_swap(*first, *iter);
         }
     }
 
-    ++left;
-    std::iter_swap(last - 1, left);
-    return left;
+    ++iter;
+    std::iter_swap(last - 1, iter);
+    return iter;
 }
 
 }  // namespace alg
