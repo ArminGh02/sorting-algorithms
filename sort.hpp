@@ -32,7 +32,7 @@ void insertion_sort(RandomAccessIterator first,
     if (first == last) {
         return;
     }
-    for (auto iter1 = first + 1; iter1 != last; ++first) {
+    for (auto iter1 = first + 1; iter1 != last; ++iter1) {
         const auto& key = *iter1;
         auto iter2 = iter1 - 1;
         for (; iter2 >= first && comp(key, *iter2); --iter2) {
