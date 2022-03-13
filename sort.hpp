@@ -37,7 +37,7 @@ void insertion_sort(const BidirectionalIterator first,
         const auto key(std::move(*iter));
         auto insertPos = iter;
         for (auto movePos = iter;
-             movePos != first && compare(key, *(--movePos));
+             movePos != first && comp(key, *(--movePos));
              --insertPos) {
             *insertPos = std::move(*movePos);
         }
