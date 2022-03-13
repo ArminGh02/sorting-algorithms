@@ -103,7 +103,7 @@ template<typename RandomAccessIterator, typename Compare>
 RandomAccessIterator selection(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
-    typename RandomAccessIterator::difference_type k,
+    typename RandomAccessIterator::size_type k,
     Compare comp = std::less<typename RandomAccessIterator::value_type>()
 ) {
     static const auto ELEMENTS_IN_GROUP = 5U;
