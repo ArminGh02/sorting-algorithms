@@ -27,7 +27,7 @@ void merge(const RandomAccessIterator first,
         }
     }
 
-    while (left <= mid - 1) {
+    while (left < mid) {
         temp.push_back(*left);
         ++left;
     }
