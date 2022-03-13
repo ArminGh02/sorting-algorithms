@@ -36,6 +36,33 @@ void merge(RandomAccessIterator first,
     std::copy(temp.begin(), temp.end(), first);
 }
 
+template<typename RandomAccessIterator, typename Compare>
+RandomAccessIterator selection(RandomAccessIterator first,
+                               RandomAccessIterator last,
+                               typename RandomAccessIterator::difference_type k,
+                               Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
+
+}
+
+template<typename RandomAccessIterator, typename Compare>
+RandomAccessIterator partition(RandomAccessIterator first,
+                               RandomAccessIterator last,
+                               Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
+    auto median = selection(first, last, std::distance(first, last) / 2, comp);
+    std::iter_swap(median, last - 1);
+    auto left = first - 1;
+    auto right = first;
+    for (; right != last; ++right) {
+        if (comp(*right, *median)) {
+            ++left;
+            std::iter_swap(*right, *left);
+        }
+    }
+    ++left;
+    std::iter_swap(last - 1, left);
+    return left;
+}
+
 }  // namespace alg
 
 #endif  // ALGORITHMS_HPP
