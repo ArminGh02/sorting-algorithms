@@ -25,20 +25,23 @@ void bubble_sort(BidirectionalIterator first,
     }
 }
 
-template<typename RandomAccessIterator, typename Compare>
-void insertion_sort(RandomAccessIterator first,
-                    RandomAccessIterator last,
-                    Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
+template<typename BidirectionalIterator, typename Compare>
+void insertion_sort(BidirectionalIterator first,
+                    BidirectionalIterator last,
+                    Compare comp = std::less<typename BidirectionalIterator::value_type>()) {
     if (first == last) {
         return;
     }
-    for (auto iter1 = first + 1; iter1 != last; ++iter1) {
-        const auto& key = *iter1;
-        auto iter2 = iter1 - 1;
-        for (; iter2 >= first && comp(key, *iter2); --iter2) {
-            *(iter2 + 1) = *iter2;
+    auto iter = first;
+    for (++iter; iter != last; ++iter) {
+        const auto key(std::move(*iter));
+        auto insertPos = iter;
+        for (auto movePos = iter;
+             movePos != first && compare(key, *(--movePos));
+             --insertPos) {
+            *insertPos = std::move(*movePos);
         }
-        *(iter2 + 1) = key;
+        *insertPos = std::move(key);
     }
 }
 
