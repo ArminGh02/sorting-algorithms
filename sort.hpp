@@ -8,8 +8,8 @@
 namespace alg {
 
 template<typename BidirectionalIterator, typename Compare>
-void bubble_sort(BidirectionalIterator first,
-                 BidirectionalIterator last,
+void bubble_sort(const BidirectionalIterator first,
+                 const BidirectionalIterator last,
                  Compare comp = std::less<typename BidirectionalIterator::value_type>()) {
     if (first == last) {
         return;
@@ -26,8 +26,8 @@ void bubble_sort(BidirectionalIterator first,
 }
 
 template<typename BidirectionalIterator, typename Compare>
-void insertion_sort(BidirectionalIterator first,
-                    BidirectionalIterator last,
+void insertion_sort(const BidirectionalIterator first,
+                    const BidirectionalIterator last,
                     Compare comp = std::less<typename BidirectionalIterator::value_type>()) {
     if (first == last) {
         return;
@@ -46,8 +46,8 @@ void insertion_sort(BidirectionalIterator first,
 }
 
 template<typename RandomAccessIterator, typename Compare>
-void merge_sort(RandomAccessIterator first,
-                RandomAccessIterator last,
+void merge_sort(const RandomAccessIterator first,
+                const RandomAccessIterator last,
                 Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
     if (last <= first) {
         return;
@@ -59,8 +59,8 @@ void merge_sort(RandomAccessIterator first,
 }
 
 template<typename RandomAccessIterator, typename Compare>
-void quick_sort(RandomAccessIterator first,
-                RandomAccessIterator last,
+void quick_sort(const RandomAccessIterator first,
+                const RandomAccessIterator last,
                 Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
     if (last <= first) {
         return;

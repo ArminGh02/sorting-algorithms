@@ -6,9 +6,9 @@
 namespace alg {
 
 template<typename RandomAccessIterator, typename Compare>
-void merge(RandomAccessIterator first,
-           RandomAccessIterator mid,
-           RandomAccessIterator last,
+void merge(const RandomAccessIterator first,
+           const RandomAccessIterator mid,
+           const RandomAccessIterator last,
            Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
     std::vector<typename RandomAccessIterator::value_type> temp;
     temp.reserve(std::distance(first, last) + 1);
