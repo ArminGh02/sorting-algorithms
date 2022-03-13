@@ -11,6 +11,9 @@ template<typename RandomAccessIterator, typename Compare>
 void bubble_sort(RandomAccessIterator first,
                  RandomAccessIterator last,
                  Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
+    if (first == last) {
+        return;
+    }
     for (; first != last - 1; ++first) {
         for (auto iter = first + 1; iter != last; ++iter) {
             if (comp(*iter, *first)) {
@@ -24,6 +27,9 @@ template<typename RandomAccessIterator, typename Compare>
 void insertion_sort(RandomAccessIterator first,
                     RandomAccessIterator last,
                     Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
+    if (first == last) {
+        return;
+    }
     for (auto iter1 = first + 1; iter1 != last; ++first) {
         const auto& key = *iter1;
         auto iter2 = iter1 - 1;
