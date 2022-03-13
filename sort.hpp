@@ -14,7 +14,8 @@ void bubble_sort(BidirectionalIterator first,
     if (first == last) {
         return;
     }
-    for (; first != last - 1; ++first) {
+    auto e = last;
+    for (--e; first != e; ++first) {
         auto iter = first;
         for (++iter; iter != last; ++iter) {
             if (comp(*iter, *first)) {
