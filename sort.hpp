@@ -16,7 +16,7 @@ namespace alg {
 
 template<typename BidirectionalIterator,
          typename Compare = std::less<typename BidirectionalIterator::value_type>>
-void bubble_sort(
+inline void bubble_sort(
     BidirectionalIterator first,
     BidirectionalIterator last,
     Compare comp = Compare{}
@@ -37,7 +37,7 @@ void bubble_sort(
 
 template<typename BidirectionalIterator,
          typename Compare = std::less<typename BidirectionalIterator::value_type>>
-void insertion_sort(
+inline void insertion_sort(
     const BidirectionalIterator first,
     const BidirectionalIterator last,
     Compare comp = Compare{}
@@ -60,14 +60,14 @@ void insertion_sort(
 
 template<typename RandomAccessIterator,
          typename Compare = std::less<typename RandomAccessIterator::value_type>>
-void merge(
+inline void merge(
     const RandomAccessIterator first,
     const RandomAccessIterator mid,
     const RandomAccessIterator last,
     Compare comp = Compare{}
 ) {
     std::vector<typename RandomAccessIterator::value_type> temp;
-    temp.reserve(std::distance(first, last) + 1);
+    temp.reserve(std::distance(first, last));
 
     auto left = first;
     auto right = mid;
@@ -95,7 +95,7 @@ void merge(
 
 template<typename RandomAccessIterator,
          typename Compare = std::less<typename RandomAccessIterator::value_type>>
-void merge_sort(
+inline void merge_sort(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
     Compare comp
@@ -111,11 +111,11 @@ void merge_sort(
 
 template<typename BidirectionalIterator,
          typename Compare = std::less<typename BidirectionalIterator::value_type>>
-BidirectionalIterator partition(
+inline BidirectionalIterator partition(
     BidirectionalIterator first,
     BidirectionalIterator last,
     BidirectionalIterator pivot,
-    Compare comp = Compare{}
+    Compare comp = Compare{}3
 ) {
     auto e = last;
     --e;
@@ -137,7 +137,7 @@ BidirectionalIterator partition(
 
 template<typename BidirectionalIterator,
          typename Compare = std::less<typename BidirectionalIterator::value_type>>
-BidirectionalIterator partition_pivot_last(
+inline BidirectionalIterator partition_pivot_last(
     BidirectionalIterator first,
     BidirectionalIterator last,
     Compare comp = Compare{}
@@ -147,13 +147,13 @@ BidirectionalIterator partition_pivot_last(
 
 template<typename RandomAccessIterator,
          typename Compare = std::less<typename RandomAccessIterator::value_type>>
-RandomAccessIterator partition_random(
+inline RandomAccessIterator partition_random(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
     Compare comp = Compare{}
 ) {
     static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-    std::uniform_int_distribution<> dist(0, std::distance(first, last));
+    std::uniform_int_distribution<> dist(0, std::distance(first, last) - 1);
 
     auto pivot = first + dist(gen);
     return partition(first, last, pivot, comp);
@@ -163,7 +163,7 @@ namespace detail {
 
 template<typename RandomAccessIterator,
          typename Compare = std::less<typename RandomAccessIterator::value_type>>
-RandomAccessIterator find_median(
+inline RandomAccessIterator find_median(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
     Compare comp = Compare{}
@@ -176,7 +176,7 @@ RandomAccessIterator find_median(
 
 template<typename RandomAccessIterator,
          typename Compare = std::less<typename RandomAccessIterator::value_type>>
-RandomAccessIterator selection(
+inline RandomAccessIterator selection(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
     std::size_t k,
@@ -188,7 +188,7 @@ RandomAccessIterator selection(
         return first;
     }
 
-    std::size_t medians_count = (std::distance(first, last) + 1) / ELEMENTS_IN_GROUP;
+    std::size_t medians_count = (std::distance(first, last)) / ELEMENTS_IN_GROUP;
     std::vector<typename RandomAccessIterator::value_type> medians;
     medians.reserve(medians_count);
     for (std::size_t i = 0; i < medians_count; ++i) {
@@ -211,7 +211,7 @@ RandomAccessIterator selection(
 
 template<typename RandomAccessIterator,
          typename Compare = std::less<typename RandomAccessIterator::value_type>>
-RandomAccessIterator partition_median(
+inline RandomAccessIterator partition_median(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
     Compare comp = Compare{}
@@ -224,7 +224,7 @@ namespace detail {
 
 template<typename RandomAccessIterator,
          typename Compare = std::less<typename RandomAccessIterator::value_type>>
-void quick_sort_impl(
+inline void quick_sort_impl(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
     const std::random_access_iterator_tag iter_tag,
@@ -240,7 +240,7 @@ void quick_sort_impl(
 
 template<typename BidirectionalIterator,
          typename Compare = std::less<typename BidirectionalIterator::value_type>>
-void quick_sort_impl(
+inline void quick_sort_impl(
     BidirectionalIterator first,
     BidirectionalIterator last,
     const std::bidirectional_iterator_tag iter_tag,
@@ -259,7 +259,7 @@ void quick_sort_impl(
 
 template<typename BidirectionalIterator,
          typename Compare = std::less<typename BidirectionalIterator::value_type>>
-void quick_sort(
+inline void quick_sort(
     const BidirectionalIterator first,
     const BidirectionalIterator last,
     Compare comp = Compare{}
@@ -270,7 +270,7 @@ void quick_sort(
 
 template<typename RandomAccessIterator,
          typename Compare = std::less<typename RandomAccessIterator::value_type>>
-void counting_sort(
+inline void counting_sort(
     RandomAccessIterator first,
     RandomAccessIterator last,
     Compare comp = Compare{}
@@ -280,7 +280,7 @@ void counting_sort(
 
 template<typename RandomAccessIterator,
          typename Compare = std::less<typename RandomAccessIterator::value_type>>
-void radix_sort(
+inline void radix_sort(
     RandomAccessIterator first,
     RandomAccessIterator last,
     Compare comp = Compare{}
@@ -288,14 +288,11 @@ void radix_sort(
 
 }
 
-template<typename RandomAccessIterator,
-         typename Compare = std::less<typename RandomAccessIterator::value_type>>
-void bucket_sort(
-    RandomAccessIterator first,
-    RandomAccessIterator last,
-    Compare comp = Compare{}
-) {
-
+template<typename Float,
+         typename Iter,
+         class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
+inline void bucket_sort(Iter first, Iter last) {
+    
 }
 
 }  // namespace alg
