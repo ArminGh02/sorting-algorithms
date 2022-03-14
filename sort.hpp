@@ -227,7 +227,7 @@ template<typename RandomAccessIterator,
 void quick_sort_impl(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
-    std::random_access_iterator_tag iter_tag,
+    const std::random_access_iterator_tag iter_tag,
     Compare comp = Compare{}
 ) {
     if (last - 1 <= first) {
@@ -243,7 +243,7 @@ template<typename BidirectionalIterator,
 void quick_sort_impl(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    std::bidirectional_iterator_tag iter_tag,
+    const std::bidirectional_iterator_tag iter_tag,
     Compare comp = std::less<typename BidirectionalIterator::value_type>()
 ) {
     if (first == last || first == --last) {
