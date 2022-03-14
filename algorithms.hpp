@@ -10,6 +10,20 @@
 
 namespace alg {
 
+namespace detail {
+
+template<typename RandomAccessIterator, typename Compare = std::less<typename RandomAccessIterator::value_type>>
+RandomAccessIterator find_median(
+    const RandomAccessIterator first,
+    const RandomAccessIterator last,
+    Compare comp = Compare{}
+) {
+    insertion_sort(first, last, comp);
+    return first + std::distance(first, last)/2;
+}
+
+}
+
 template<typename RandomAccessIterator,
          typename Compare = std::less<typename RandomAccessIterator::value_type>>
 void merge(const RandomAccessIterator first,
@@ -93,16 +107,6 @@ RandomAccessIterator partition_random(
 }
 
 template<typename RandomAccessIterator, typename Compare = std::less<typename RandomAccessIterator::value_type>>
-RandomAccessIterator find_median(
-    const RandomAccessIterator first,
-    const RandomAccessIterator last,
-    Compare comp = Compare{}
-) {
-    insertion_sort(first, last, comp);
-    return first + std::distance(first, last)/2;
-}
-
-template<typename RandomAccessIterator, typename Compare = std::less<typename RandomAccessIterator::value_type>>
 RandomAccessIterator selection(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
@@ -120,7 +124,7 @@ RandomAccessIterator selection(
     std::vector<typename RandomAccessIterator::value_type> medians;
     medians.reserve(medians_count);
     for (std::size_t i = 0; i < medians_count - 1; ++i) {
-        medians.push_back(*find_median(first + i*5, first + (i + 1)*5));
+        medians.push_back(*detail::find_median(first + i*5, first + (i + 1)*5));
     }
 
     auto median_of_medians = selection(medians.begin(), medians.end(), medians.size() / 2, comp);
