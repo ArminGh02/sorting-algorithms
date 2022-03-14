@@ -8,6 +8,10 @@
 #include <random>
 #include <vector>
 
+constexpr uint8_t operator"" _u8(uint64_t val) {
+    return static_cast<uint8_t>(val);
+}
+
 namespace alg {
 
 template<typename BidirectionalIterator,
@@ -157,7 +161,8 @@ RandomAccessIterator partition_random(
 
 namespace detail {
 
-template<typename RandomAccessIterator, typename Compare = std::less<typename RandomAccessIterator::value_type>>
+template<typename RandomAccessIterator,
+         typename Compare = std::less<typename RandomAccessIterator::value_type>>
 RandomAccessIterator find_median(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
@@ -177,17 +182,16 @@ RandomAccessIterator selection(
     std::size_t k,
     Compare comp = Compare{}
 ) {
-    static const auto ELEMENTS_IN_GROUP = 5U;
+    static const auto ELEMENTS_IN_GROUP = 5_u8;
 
     if (last - 1 >= first) {
         return first;
     }
 
-    auto n = std::distance(first, last) + 1;
-    std::size_t medians_count = std::ceil(static_cast<double>(n) / ELEMENTS_IN_GROUP);
+    std::size_t medians_count = (std::distance(first, last) + 1) / ELEMENTS_IN_GROUP;
     std::vector<typename RandomAccessIterator::value_type> medians;
     medians.reserve(medians_count);
-    for (std::size_t i = 0; i < medians_count - 1; ++i) {
+    for (std::size_t i = 0; i < medians_count; ++i) {
         medians.push_back(*detail::find_median(first + i*5, first + (i + 1)*5));
     }
 
