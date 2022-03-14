@@ -7,9 +7,10 @@
 
 namespace alg {
 
-template<typename BidirectionalIterator, typename Compare>
-void bubble_sort(const BidirectionalIterator first,
-                 const BidirectionalIterator last,
+template<typename BidirectionalIterator,
+         typename Compare = std::less<typename BidirectionalIterator::value_type>>
+void bubble_sort(BidirectionalIterator first,
+                 BidirectionalIterator last,
                  Compare comp = std::less<typename BidirectionalIterator::value_type>()) {
     if (first == last) {
         return;
@@ -25,7 +26,8 @@ void bubble_sort(const BidirectionalIterator first,
     }
 }
 
-template<typename BidirectionalIterator, typename Compare>
+template<typename BidirectionalIterator,
+         typename Compare = std::less<typename BidirectionalIterator::value_type>>
 void insertion_sort(const BidirectionalIterator first,
                     const BidirectionalIterator last,
                     Compare comp = std::less<typename BidirectionalIterator::value_type>()) {
@@ -45,62 +47,68 @@ void insertion_sort(const BidirectionalIterator first,
     }
 }
 
-template<typename RandomAccessIterator, typename Compare>
+template<typename RandomAccessIterator,
+         typename Compare = std::less<typename RandomAccessIterator::value_type>>
 void merge_sort(const RandomAccessIterator first,
                 const RandomAccessIterator last,
-                Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
+                Compare comp = Compare{}) {
     if (last - 1 <= first) {
         return;
     }
     auto mid = first + std::distance(first, last)/2;
     merge_sort(first, mid, comp);
-    merge_sort(mid + 1, last, comp);
-    merge(first, mid + 1, last, comp);
+    merge_sort(mid, last, comp);
+    merge(first, mid, last, comp);
 }
 
-template<typename RandomAccessIterator, typename Compare>
-void quick_sort(const RandomAccessIterator first,
-                const RandomAccessIterator last,
-                Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
-    if (last - 1 <= first) {
-        return;
-    }
-    auto pivot = partition_median(first, last, comp);
-    quick_sort(first, pivot, comp);
-    quick_sort(++pivot, last, comp);
-}
+// template<typename RandomAccessIterator,
+//          typename Compare = std::less<typename RandomAccessIterator::value_type>>
+// void quick_sort(const RandomAccessIterator first,
+//                 const RandomAccessIterator last,
+//                 Compare comp = Compare{}) {
+//     if (last - 1 <= first) {
+//         return;
+//     }
+//     auto pivot = partition_median(first, last, comp);
+//     quick_sort(first, pivot, comp);
+//     quick_sort(++pivot, last, comp);
+// }
 
-template<typename BidirectionalIterator, typename Compare>
-void quick_sort(const BidirectionalIterator first,
-                const BidirectionalIterator last,
-                Compare comp = std::less<typename BidirectionalIterator::value_type>()) {
-    if (--last <= first) {
-        return;
-    }
-    ++last;
-    auto pivot = partition_pivot_last(first, last, comp);
-    quick_sort(first, pivot, comp);
-    quick_sort(++pivot, last, comp);
-}
+// template<typename BidirectionalIterator,
+//          typename Compare = std::less<typename BidirectionalIterator::value_type>>
+// void quick_sort(const BidirectionalIterator first,
+//                 const BidirectionalIterator last,
+//                 Compare comp = std::less<typename BidirectionalIterator::value_type>()) {
+//     if (--last <= first) {
+//         return;
+//     }
+//     ++last;
+//     auto pivot = partition_pivot_last(first, last, comp);
+//     quick_sort(first, pivot, comp);
+//     quick_sort(++pivot, last, comp);
+// }
 
-template<typename RandomAccessIterator, typename Compare>
+template<typename RandomAccessIterator,
+         typename Compare = std::less<typename RandomAccessIterator::value_type>>
 void counting_sort(RandomAccessIterator first,
                    RandomAccessIterator last,
-                   Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
+                   Compare comp = Compare{}) {
 
 }
 
-template<typename RandomAccessIterator, typename Compare>
+template<typename RandomAccessIterator,
+         typename Compare = std::less<typename RandomAccessIterator::value_type>>
 void radix_sort(RandomAccessIterator first,
                 RandomAccessIterator last,
-                Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
+                Compare comp = Compare{}) {
 
 }
 
-template<typename RandomAccessIterator, typename Compare>
+template<typename RandomAccessIterator,
+         typename Compare = std::less<typename RandomAccessIterator::value_type>>
 void bucket_sort(RandomAccessIterator first,
                  RandomAccessIterator last,
-                 Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
+                 Compare comp = Compare{}) {
 
 }
 

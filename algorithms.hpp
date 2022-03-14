@@ -10,17 +10,18 @@
 
 namespace alg {
 
-template<typename RandomAccessIterator, typename Compare>
+template<typename RandomAccessIterator,
+         typename Compare = std::less<typename RandomAccessIterator::value_type>>
 void merge(const RandomAccessIterator first,
            const RandomAccessIterator mid,
            const RandomAccessIterator last,
-           Compare comp = std::less<typename RandomAccessIterator::value_type>()) {
+           Compare comp = Compare{}) {
     std::vector<typename RandomAccessIterator::value_type> temp;
     temp.reserve(std::distance(first, last) + 1);
 
     auto left = first;
     auto right = mid;
-    while (left < mid && right <= last) {
+    while (left < mid && right < last) {
         if (comp(*right, *left)) {
             temp.push_back(*right);
             ++right;
@@ -42,12 +43,13 @@ void merge(const RandomAccessIterator first,
     std::copy(temp.begin(), temp.end(), first);
 }
 
-template<typename BidirectionalIterator, typename Compare>
+template<typename BidirectionalIterator,
+         typename Compare = std::less<typename BidirectionalIterator::value_type>>
 BidirectionalIterator partition(
     BidirectionalIterator first,
     BidirectionalIterator last,
     BidirectionalIterator pivot,
-    Compare comp = std::less<typename BidirectionalIterator::value_type>()
+    Compare comp = Compare{}
 ) {
     auto e = last;
     --e;
@@ -67,20 +69,21 @@ BidirectionalIterator partition(
     return iter;
 }
 
-template<typename BidirectionalIterator, typename Compare>
+template<typename BidirectionalIterator,
+         typename Compare = std::less<typename BidirectionalIterator::value_type>>
 BidirectionalIterator partition_pivot_last(
     const BidirectionalIterator first,
     const BidirectionalIterator last,
-    Compare comp = std::less<typename BidirectionalIterator::value_type>()
+    Compare comp = Compare{}
 ) {
     return partition(first, last, --last, comp);
 }
 
-template<typename RandomAccessIterator, typename Compare>
+template<typename RandomAccessIterator, typename Compare = std::less<typename RandomAccessIterator::value_type>>
 RandomAccessIterator partition_random(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
-    Compare comp = std::less<typename RandomAccessIterator::value_type>()
+    Compare comp = Compare{}
 ) {
     static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<> dist(0, std::distance(first, last));
@@ -89,22 +92,22 @@ RandomAccessIterator partition_random(
     return partition(first, last, pivot, comp);
 }
 
-template<typename RandomAccessIterator, typename Compare>
+template<typename RandomAccessIterator, typename Compare = std::less<typename RandomAccessIterator::value_type>>
 RandomAccessIterator find_median(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
-    Compare comp = std::less<typename RandomAccessIterator::value_type>()
+    Compare comp = Compare{}
 ) {
     insertion_sort(first, last, comp);
     return first + std::distance(first, last)/2;
 }
 
-template<typename RandomAccessIterator, typename Compare>
+template<typename RandomAccessIterator, typename Compare = std::less<typename RandomAccessIterator::value_type>>
 RandomAccessIterator selection(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
     typename RandomAccessIterator::size_type k,
-    Compare comp = std::less<typename RandomAccessIterator::value_type>()
+    Compare comp = Compare{}
 ) {
     static const auto ELEMENTS_IN_GROUP = 5U;
 
@@ -134,11 +137,11 @@ RandomAccessIterator selection(
     return pivot;
 }
 
-template<typename RandomAccessIterator, typename Compare>
+template<typename RandomAccessIterator, typename Compare = std::less<typename RandomAccessIterator::value_type>>
 RandomAccessIterator partition_median(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
-    Compare comp = std::less<typename RandomAccessIterator::value_type>()
+    Compare comp = Compare{}
 ) {
     auto pivot = selection(first, last, std::distance(first, last) / 2, comp);
     return partition(first, last, pivot, comp);
