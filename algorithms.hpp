@@ -110,7 +110,7 @@ template<typename RandomAccessIterator, typename Compare = std::less<typename Ra
 RandomAccessIterator selection(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
-    typename RandomAccessIterator::size_type k,
+    std::size_t k,
     Compare comp = Compare{}
 ) {
     static const auto ELEMENTS_IN_GROUP = 5U;
