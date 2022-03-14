@@ -74,7 +74,7 @@ BidirectionalIterator partition(
     for (; first != last; ++first) {
         if (comp(*first, *pivot)) {
             ++iter;
-            std::iter_swap(*first, *iter);
+            std::iter_swap(first, iter);
         }
     }
 
