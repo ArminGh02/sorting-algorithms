@@ -86,8 +86,8 @@ BidirectionalIterator partition(
 template<typename BidirectionalIterator,
          typename Compare = std::less<typename BidirectionalIterator::value_type>>
 BidirectionalIterator partition_pivot_last(
-    const BidirectionalIterator first,
-    const BidirectionalIterator last,
+    BidirectionalIterator first,
+    BidirectionalIterator last,
     Compare comp = Compare{}
 ) {
     return partition(first, last, --last, comp);
