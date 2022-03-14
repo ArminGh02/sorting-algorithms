@@ -19,7 +19,7 @@ template<typename BidirectionalIterator,
 void bubble_sort(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    Compare comp = std::less<typename BidirectionalIterator::value_type>()
+    Compare comp = Compare{}
 ) {
     if (first == last) {
         return;
