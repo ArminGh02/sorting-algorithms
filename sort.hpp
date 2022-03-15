@@ -9,8 +9,6 @@
 #include <random>
 #include <vector>
 
-#include <iostream>
-
 namespace alg {
 
 template<class BidirectionalIterator,
@@ -295,10 +293,10 @@ inline void radix_sort(
 
 }
 
-template<class Iterator,
-         class = typename std::enable_if<std::is_floating_point<typename Iterator::value_type>::value>::type>
-inline void bucket_sort(Iterator first, Iterator last, std::size_t n) {
-    using Float = typename Iterator::value_type;
+template<class ForwardIterator,
+         class Float = typename ForwardIterator::value_type,
+         class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
+inline void bucket_sort(ForwardIterator first, ForwardIterator last, std::size_t n) {
     std::vector<std::list<Float>> buckets(n);
     for (auto it = first; it != last; ++it) {
         buckets[std::floor(*it * n)].push_back(*it);
@@ -317,7 +315,8 @@ inline void bucket_sort(Iterator first, Iterator last, std::size_t n) {
 }
 
 template<class RandomAccessIterator,
-         class = typename std::enable_if<std::is_floating_point<typename RandomAccessIterator::value_type>::value>::type>
+         class Float = typename RandomAccessIterator::value_type,
+         class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
 inline void bucket_sort(RandomAccessIterator first, RandomAccessIterator last) {
     return bucket_sort(first, last, last - first);
 }
