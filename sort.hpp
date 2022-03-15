@@ -11,10 +11,6 @@
 
 #include <iostream>
 
-constexpr uint8_t operator"" _u8(uint64_t val) {
-    return static_cast<uint8_t>(val);
-}
-
 namespace alg {
 
 template<class BidirectionalIterator,
@@ -176,6 +172,14 @@ inline RandomAccessIterator find_median(
 }
 
 }  // namespace detail
+
+inline namespace literals {
+
+constexpr uint8_t operator"" _u8(uint64_t val) {
+    return static_cast<uint8_t>(val);
+}
+
+}  // namespace literals
 
 template<class RandomAccessIterator,
          class Compare = std::less<typename RandomAccessIterator::value_type>>
