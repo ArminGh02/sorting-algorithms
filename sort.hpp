@@ -195,7 +195,7 @@ inline RandomAccessIterator selection(
         return first;
     }
 
-    std::size_t medians_count = (std::distance(first, last)) / ELEMENTS_IN_GROUP;
+    std::size_t medians_count = std::distance(first, last) / ELEMENTS_IN_GROUP;
     std::vector<typename RandomAccessIterator::value_type> medians;
     medians.reserve(medians_count);
     for (std::size_t i = 0; i < medians_count; ++i) {
