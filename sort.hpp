@@ -5,8 +5,11 @@
 #include <chrono>
 #include <cmath>
 #include <iterator>
+#include <list>
 #include <random>
 #include <vector>
+
+#include <iostream>
 
 constexpr uint8_t operator"" _u8(uint64_t val) {
     return static_cast<uint8_t>(val);
@@ -115,7 +118,7 @@ inline BidirectionalIterator partition(
     BidirectionalIterator first,
     BidirectionalIterator last,
     BidirectionalIterator pivot,
-    Compare comp = Compare{}3
+    Compare comp = Compare{}
 ) {
     auto e = last;
     --e;
@@ -288,11 +291,31 @@ inline void radix_sort(
 
 }
 
-template<typename Float,
-         typename Iter,
-         class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
-inline void bucket_sort(Iter first, Iter last) {
-    
+template<class Iterator,
+         class = typename std::enable_if<std::is_floating_point<typename Iterator::value_type>::value>::type>
+inline void bucket_sort(Iterator first, Iterator last, std::size_t n) {
+    using Float = typename Iterator::value_type;
+    std::vector<std::list<Float>> buckets(n);
+    for (auto it = first; it != last; ++it) {
+        buckets[std::floor(*it * n)].push_back(*it);
+    }
+
+    for (auto& bucket : buckets) {
+        insertion_sort(bucket.begin(), bucket.end());
+    }
+
+    for (const auto& bucket : buckets) {
+        for (auto element : bucket) {
+            *first = element;
+            ++first;
+        }
+    }
+}
+
+template<class RandomAccessIterator,
+         class = typename std::enable_if<std::is_floating_point<typename RandomAccessIterator::value_type>::value>::type>
+inline void bucket_sort(RandomAccessIterator first, RandomAccessIterator last) {
+    return bucket_sort(first, last, last - first);
 }
 
 }  // namespace alg
