@@ -9,8 +9,6 @@
 #include <random>
 #include <vector>
 
-#include <iostream>
-
 namespace alg {
 
 template<class BidirectionalIterator,
@@ -97,7 +95,7 @@ template<class RandomAccessIterator,
 inline void merge_sort(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
-    Compare comp
+    Compare comp = Compare{}
 ) {
     if (last - 1 <= first) {
         return;
@@ -237,9 +235,7 @@ inline void quick_sort_impl(
     if (last - 1 <= first) {
         return;
     }
-    std::copy(first, last, std::ostream_iterator<int>(std::cout, ", "));
     auto pivot = partition_pivot_last(first, last, comp);
-    std::cout << "pivot: " << *pivot << "\n";
     quick_sort_impl(first, pivot, iter_tag, comp);
     quick_sort_impl(++pivot, last, iter_tag, comp);
 }
