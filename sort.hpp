@@ -273,24 +273,45 @@ inline void quick_sort(
     return detail::quick_sort_impl(first, last, iter_category{}, comp);
 }
 
-template<class RandomAccessIterator,
-         class Compare = std::less<typename RandomAccessIterator::value_type>>
+template<class BidirectionalIterator,
+         class Int = typename BidirectionalIterator::value_type,
+         class = typename std::enable_if<std::is_integral<Int>::value>::type>
 inline void counting_sort(
-    RandomAccessIterator first,
-    RandomAccessIterator last,
-    Compare comp = Compare{}
+    BidirectionalIterator first,
+    BidirectionalIterator last,
+    Int max,
+    std::size_t n
 ) {
+    std::vector<Int> counter(max + 1);
+    for (auto it = first; it != last; ++it) {
+        ++counter[*it];
+    }
 
+    for (std::size_t i = 1; i < counter.size(); ++i) {
+        counter[i] += counter[i - 1];
+    }
+
+    std::vector<Int> temp(n);
+    --last;
+    --first;
+    for (auto it = last; it != first; --it) {
+        temp[counter[*it] - 1] = *it;
+        --counter[*it];
+    }
+
+    ++first;
+    std::copy(temp.begin(), temp.end(), first);
 }
 
 template<class RandomAccessIterator,
-         class Compare = std::less<typename RandomAccessIterator::value_type>>
-inline void radix_sort(
+         class Int = typename RandomAccessIterator::value_type,
+         class = typename std::enable_if<std::is_integral<Int>::value>::type>
+inline void counting_sort(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    Compare comp = Compare{}
+    std::size_t max
 ) {
-
+    counting_sort(first, last, max, last - first);
 }
 
 template<class ForwardIterator,
