@@ -9,6 +9,8 @@
 #include <random>
 #include <vector>
 
+#include <iostream>
+
 namespace alg {
 
 template<class BidirectionalIterator,
@@ -114,21 +116,18 @@ inline BidirectionalIterator partition(
     BidirectionalIterator pivot,
     Compare comp = Compare{}
 ) {
-    auto e = last;
-    --e;
-    std::iter_swap(pivot, e);
+    --last;
+    std::iter_swap(pivot, last);
 
     auto iter = first;
-    --iter;
     for (; first != last; ++first) {
-        if (comp(*first, *pivot)) {
-            ++iter;
+        if (comp(*first, *last)) {
             std::iter_swap(first, iter);
+            ++iter;
         }
     }
 
-    ++iter;
-    std::iter_swap(e, iter);
+    std::iter_swap(last, iter);
     return iter;
 }
 
@@ -238,7 +237,9 @@ inline void quick_sort_impl(
     if (last - 1 <= first) {
         return;
     }
-    auto pivot = partition_median(first, last, comp);
+    std::copy(first, last, std::ostream_iterator<int>(std::cout, ", "));
+    auto pivot = partition_pivot_last(first, last, comp);
+    std::cout << "pivot: " << *pivot << "\n";
     quick_sort_impl(first, pivot, iter_tag, comp);
     quick_sort_impl(++pivot, last, iter_tag, comp);
 }
