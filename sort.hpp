@@ -178,7 +178,7 @@ constexpr uint8_t operator"" _u8(uint64_t val) {
 
 template<class RandomAccessIterator,
          class Compare = std::less<typename RandomAccessIterator::value_type>>
-inline RandomAccessIterator selection(
+inline RandomAccessIterator quick_select(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
     std::size_t k,
@@ -197,16 +197,16 @@ inline RandomAccessIterator selection(
         medians.push_back(*detail::find_median(first + i*5, first + (i + 1)*5));
     }
 
-    auto median_of_medians = selection(medians.begin(), medians.end(), medians.size() / 2, comp);
+    auto median_of_medians = quick_select(medians.begin(), medians.end(), medians.size() / 2, comp);
 
     auto pivot = partition(first, last, median_of_medians, comp);
     std::size_t index = std::distance(first, pivot);
 
     if (k < index) {
-        return selection(first, pivot, k, comp);
+        return quick_select(first, pivot, k, comp);
     }
     if (k > index) {
-        return selection(++pivot, last, k - index, comp);
+        return quick_select(++pivot, last, k - index, comp);
     }
     return pivot;
 }
@@ -218,7 +218,7 @@ inline RandomAccessIterator partition_median(
     const RandomAccessIterator last,
     Compare comp = Compare{}
 ) {
-    auto pivot = selection(first, last, std::distance(first, last) / 2, comp);
+    auto pivot = quick_select(first, last, std::distance(first, last) / 2, comp);
     return partition(first, last, pivot, comp);
 }
 
