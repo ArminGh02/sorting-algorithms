@@ -188,7 +188,7 @@ inline RandomAccessIterator selection(
 ) {
     static const auto ELEMENTS_IN_GROUP = 5_u8;
 
-    if (last - 1 >= first) {
+    if (last - 1 <= first) {
         return first;
     }
 
