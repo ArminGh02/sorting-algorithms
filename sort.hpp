@@ -314,6 +314,54 @@ inline void counting_sort(
     counting_sort(first, last, max, last - first);
 }
 
+namespace detail {
+
+template<class RandomAccessIterator,
+         class Int = typename RandomAccessIterator::value_type,
+         class = typename std::enable_if<std::is_integral<Int>::value>::type>
+inline void counting_sort_digit(
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    Int exp,
+    std::size_t n
+) {
+    std::vector<Int> counter(10);
+    for (auto it = first; it != last; ++it) {
+        ++counter[(*it / exp) % 10];
+    }
+
+    for (std::size_t i = 1; i < counter.size(); ++i) {
+        counter[i] += counter[i - 1];
+    }
+
+    std::vector<Int> temp(n);
+    --last;
+    --first;
+    for (auto it = last; it != first; --it) {
+        temp[counter[(*it / exp) % 10] - 1] = *it;
+        --counter[(*it / exp) % 10];
+    }
+
+    ++first;
+    std::copy(temp.begin(), temp.end(), first);
+}
+
+}
+
+template<class RandomAccessIterator,
+         class Int = typename RandomAccessIterator::value_type,
+         class = typename std::enable_if<std::is_integral<Int>::value>::type>
+inline void radix_sort(
+    const RandomAccessIterator first,
+    const RandomAccessIterator last,
+    Int max,
+    std::size_t n
+) {
+    for (Int exp = 1; max / exp > 0; exp *= 10) {
+        detail::counting_sort_digit(first, last, exp, n);
+    }
+}
+
 template<class ForwardIterator,
          class Float = typename ForwardIterator::value_type,
          class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
