@@ -203,7 +203,7 @@ inline RandomAccessIterator selection(
     auto median_of_medians = selection(medians.begin(), medians.end(), medians.size() / 2, comp);
 
     auto pivot = partition(first, last, median_of_medians, comp);
-    auto index = std::distance(first, pivot);
+    std::size_t index = std::distance(first, pivot);
 
     if (k < index) {
         return selection(first, pivot, k, comp);
