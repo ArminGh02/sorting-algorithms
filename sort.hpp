@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <forward_list>
 #include <iterator>
-#include <list>
 #include <random>
 #include <vector>
 
@@ -363,14 +363,12 @@ template<class ForwardIterator,
          class Float = typename ForwardIterator::value_type,
          class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
 inline void bucket_sort(ForwardIterator first, ForwardIterator last, std::size_t n) {
-    std::vector<std::list<Float>> buckets(n);
+    std::vector<std::forward_list<Float>> buckets(n);
     for (auto it = first; it != last; ++it) {
         buckets[std::floor(*it * n)].push_back(*it);
     }
 
-    for (auto& bucket : buckets) {
-        insertion_sort(bucket.begin(), bucket.end());
-    }
+    std::for_each(buckets.begin(), buckets.end(), [](std::forward_list<Float>& bucket) { bucket.sort(); })
 
     for (const auto& bucket : buckets) {
         for (auto element : bucket) {
