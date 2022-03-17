@@ -89,7 +89,7 @@ inline void merge(
         ++right;
     }
 
-    std::copy(temp.begin(), temp.end(), first);
+    std::move(temp.begin(), temp.end(), first);
 }
 
 template<class RandomAccessIterator,
