@@ -301,9 +301,7 @@ inline void counting_sort(
     }
 
     std::vector<Int> temp(n);
-    --last;
-    --first;
-    for (auto it = last; it != first; --it) {
+    for (auto it = last; it-- != first;) {
         temp[counter[*it] - 1] = *it;
         --counter[*it];
     }
@@ -344,14 +342,12 @@ inline void counting_sort_digit(
     }
 
     std::vector<Int> temp(n);
-    --last;
-    --first;
-    for (auto it = last; it != first; --it) {
-        temp[counter[(*it / exp) % 10] - 1] = *it;
-        --counter[(*it / exp) % 10];
+    for (auto it = last; it-- != first;) {  // https://stackoverflow.com/a/3611799/15143062
+        const auto digit = (*it / exp) % 10;
+        temp[counter[digit] - 1] = *it;
+        --counter[digit];
     }
 
-    ++first;
     std::copy(temp.begin(), temp.end(), first);
 }
 
