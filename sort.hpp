@@ -9,6 +9,8 @@
 #include <random>
 #include <vector>
 
+#include <iostream>
+
 namespace alg {
 
 template<class BidirectionalIterator,
@@ -136,7 +138,8 @@ inline BidirectionalIterator partition_pivot_last(
     BidirectionalIterator last,
     Compare comp = Compare{}
 ) {
-    return partition(first, last, --last, comp);
+    auto it = last;
+    return partition(first, last, --it, comp);
 }
 
 template<class RandomAccessIterator,
@@ -163,7 +166,7 @@ inline RandomAccessIterator find_median(
     Compare comp = Compare{}
 ) {
     insertion_sort(first, last, comp);
-    return first + std::distance(first, last)/2;
+    return first + (std::distance(first, last) - 1)/2;
 }
 
 }  // namespace detail
@@ -184,20 +187,29 @@ inline RandomAccessIterator quick_select(
     std::size_t k,
     Compare comp = Compare{}
 ) {
-    static const auto ELEMENTS_IN_GROUP = 5_u8;
+    static constexpr auto GROUP_SIZE = 5_u8;
 
     if (last - 1 <= first) {
-        return first;
+        return last - 1;
     }
 
-    std::size_t medians_count = std::distance(first, last) / ELEMENTS_IN_GROUP;
+    std::size_t n = std::distance(first, last);
+
+    std::size_t medians_count = std::ceil(static_cast<double>(n) / GROUP_SIZE);
     std::vector<typename RandomAccessIterator::value_type> medians;
     medians.reserve(medians_count);
-    for (std::size_t i = 0; i < medians_count; ++i) {
-        medians.push_back(*detail::find_median(first + i*5, first + (i + 1)*5));
+
+    std::size_t i;
+    for (i = 0; i < n / GROUP_SIZE; ++i) {
+        medians.push_back(*detail::find_median(first + i*GROUP_SIZE, first + (i + 1)*GROUP_SIZE));
+    }
+    if (i*GROUP_SIZE < n) {
+        medians.push_back(*detail::find_median(first + i*GROUP_SIZE, last));
     }
 
-    auto median_of_medians = quick_select(medians.begin(), medians.end(), medians.size() / 2, comp);
+    auto median_of_medians = (medians.size() == 1)
+        ? first + (last - first - 1) / 2
+        : std::find(first, last, *quick_select(medians.begin(), medians.end(), (medians.size() - 1) / 2, comp));
 
     auto pivot = partition(first, last, median_of_medians, comp);
     std::size_t index = std::distance(first, pivot);
@@ -206,7 +218,7 @@ inline RandomAccessIterator quick_select(
         return quick_select(first, pivot, k, comp);
     }
     if (k > index) {
-        return quick_select(++pivot, last, k - index, comp);
+        return quick_select(++pivot, last, k - index - 1, comp);
     }
     return pivot;
 }
@@ -235,7 +247,7 @@ inline void quick_sort_impl(
     if (last - 1 <= first) {
         return;
     }
-    auto pivot = partition_pivot_last(first, last, comp);
+    auto pivot = partition_median(first, last, comp);
     quick_sort_impl(first, pivot, iter_tag, comp);
     quick_sort_impl(++pivot, last, iter_tag, comp);
 }
@@ -368,7 +380,7 @@ inline void bucket_sort(ForwardIterator first, ForwardIterator last, std::size_t
         buckets[std::floor(*it * n)].push_back(*it);
     }
 
-    std::for_each(buckets.begin(), buckets.end(), [](std::forward_list<Float>& bucket) { bucket.sort(); })
+    std::for_each(buckets.begin(), buckets.end(), [](std::forward_list<Float>& bucket) { bucket.sort(); });
 
     for (const auto& bucket : buckets) {
         for (auto element : bucket) {
