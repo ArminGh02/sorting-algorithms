@@ -9,8 +9,6 @@
 #include <random>
 #include <vector>
 
-#include <iostream>
-
 namespace alg {
 
 template<class BidirectionalIterator,
