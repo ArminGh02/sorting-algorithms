@@ -133,8 +133,8 @@ template<class BidirectionalIterator,
          class Compare = std::less<typename BidirectionalIterator::value_type>>
 inline BidirectionalIterator partition(
     BidirectionalIterator first,
-    BidirectionalIterator last,
     BidirectionalIterator pivot,
+    BidirectionalIterator last,
     Compare comp = Compare{}
 ) {
     --last;
