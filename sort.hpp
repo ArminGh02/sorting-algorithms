@@ -329,7 +329,6 @@ inline void counting_sort(
         --counter[*it];
     }
 
-    ++first;
     std::copy(temp.begin(), temp.end(), first);
 }
 
