@@ -57,6 +57,26 @@ inline void insertion_sort(
     }
 }
 
+template<class BidirectionalIterator,
+         class Compare = std::less<typename BidirectionalIterator::value_type>>
+inline void selection_sort(
+    const BidirectionalIterator first,
+    const BidirectionalIterator last,
+    Compare comp = Compare{}
+) {
+    auto e = last;
+    for (--e; first != e; ++first) {
+        auto minPos = first;
+        auto it = first;
+        for (++it; it != last; ++it) {
+            if (comp(*it, *minPos)) {
+                minPos = it;
+            }
+        }
+        std::iter_swap(first, minPos);
+    }
+}
+
 template<class RandomAccessIterator,
          class Compare = std::less<typename RandomAccessIterator::value_type>>
 inline void merge(
