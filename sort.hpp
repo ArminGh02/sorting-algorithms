@@ -64,6 +64,9 @@ inline void selection_sort(
     const BidirectionalIterator last,
     Compare comp = Compare{}
 ) {
+    if (first == last) {
+        return;
+    }
     auto e = last;
     for (--e; first != e; ++first) {
         auto minPos = first;
@@ -321,7 +324,7 @@ inline void counting_sort(
     }
 
     std::vector<Int> temp(n);
-    for (auto it = last; it-- != first;) {
+    for (auto it = last; it-- != first;) {  // https://stackoverflow.com/a/3611799/15143062
         temp[counter[*it] - 1] = *it;
         --counter[*it];
     }
