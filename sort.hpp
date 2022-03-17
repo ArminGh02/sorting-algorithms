@@ -93,20 +93,20 @@ inline void merge(
     auto right = mid;
     while (left < mid && right < last) {
         if (comp(*right, *left)) {
-            temp.push_back(*right);
+            temp.push_back(std::move(*right));
             ++right;
         } else {
-            temp.push_back(*left);
+            temp.push_back(std::move(*left));
             ++left;
         }
     }
 
     while (left < mid) {
-        temp.push_back(*left);
+        temp.push_back(std::move(*left));
         ++left;
     }
     while (right < last) {
-        temp.push_back(*right);
+        temp.push_back(std::move(*right));
         ++right;
     }
 
