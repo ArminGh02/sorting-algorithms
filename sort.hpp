@@ -303,6 +303,65 @@ inline void quick_sort(
     return detail::quick_sort_impl(first, last, iter_category{}, comp);
 }
 
+template<class RandomAccessIterator,
+         class Compare = std::less<typename RandomAccessIterator::value_type>>
+inline void heapify_down(
+    const RandomAccessIterator first,
+    const RandomAccessIterator last,
+    std::size_t i,
+    Compare comp = Compare{}
+) {
+    std::size_t n = last - first;
+    while (true) {
+        auto left = i*2 + 1;
+        auto right = i*2 + 2;
+
+        auto largest = i;
+        if (left < n && comp(*(first + largest), *(first + left))) {
+            largest = left;
+        }
+        if (right < n && comp(*(first + largest), *(first + right))) {
+            largest = right;
+        }
+
+        if (largest == i) {
+            return;
+        }
+
+        std::iter_swap(first + largest, first + i);
+        i = largest;
+    }
+}
+
+template<class RandomAccessIterator,
+         class Compare = std::less<typename RandomAccessIterator::value_type>>
+inline void make_heap(
+    const RandomAccessIterator first,
+    const RandomAccessIterator last,
+    Compare comp = Compare{}
+) {
+    for (auto i = (last - first)/2 - 1; i >= 0; --i) {
+        heapify_down(first, last, i, comp);
+    }
+}
+
+template<class RandomAccessIterator,
+         class Compare = std::less<typename RandomAccessIterator::value_type>>
+inline void heap_sort(
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    Compare comp = Compare{}
+) {
+    if (first == last) {
+        return;
+    }
+    alg::make_heap(first, last, comp);
+    for (--last; last != first; --last) {
+        std::iter_swap(first, last);
+        heapify_down(first, last, 0, comp);
+    }
+}
+
 template<class BidirectionalIterator,
          class Int = typename BidirectionalIterator::value_type,
          class = typename std::enable_if<std::is_integral<Int>::value>::type>
