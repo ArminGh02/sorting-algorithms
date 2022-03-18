@@ -17,7 +17,7 @@ inline void bubble_sort(
     BidirectionalIterator first,
     BidirectionalIterator last,
     Compare comp = Compare{}
-) {
+) noexcept {
     if (first == last) {
         return;
     }
@@ -38,7 +38,7 @@ inline void insertion_sort(
     const BidirectionalIterator first,
     const BidirectionalIterator last,
     Compare comp = Compare{}
-) {
+) noexcept {
     if (first == last) {
         return;
     }
@@ -61,7 +61,7 @@ inline void selection_sort(
     const BidirectionalIterator first,
     const BidirectionalIterator last,
     Compare comp = Compare{}
-) {
+) noexcept {
     if (first == last) {
         return;
     }
@@ -136,7 +136,7 @@ inline BidirectionalIterator partition(
     BidirectionalIterator pivot,
     BidirectionalIterator last,
     Compare comp = Compare{}
-) {
+) noexcept {
     --last;
     std::iter_swap(pivot, last);
 
@@ -158,7 +158,7 @@ inline BidirectionalIterator partition_pivot_last(
     BidirectionalIterator first,
     BidirectionalIterator last,
     Compare comp = Compare{}
-) {
+) noexcept {
     auto it = last;
     return partition(first, last, --it, comp);
 }
@@ -185,7 +185,7 @@ inline RandomAccessIterator find_median(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
     Compare comp = Compare{}
-) {
+) noexcept {
     insertion_sort(first, last, comp);
     return first + (std::distance(first, last) - 1)/2;
 }
@@ -194,7 +194,7 @@ inline RandomAccessIterator find_median(
 
 inline namespace literals {
 
-constexpr uint8_t operator"" _u8(uint64_t val) {
+constexpr uint8_t operator"" _u8(uint64_t val) noexcept {
     return static_cast<uint8_t>(val);
 }
 
@@ -280,7 +280,7 @@ inline void quick_sort_impl(
     BidirectionalIterator last,
     const std::bidirectional_iterator_tag iter_tag,
     Compare comp = std::less<typename BidirectionalIterator::value_type>()
-) {
+) noexcept {
     if (first == last || first == --last) {
         return;
     }
@@ -310,7 +310,7 @@ inline void heapify_down(
     const RandomAccessIterator last,
     std::size_t i,
     Compare comp = Compare{}
-) {
+) noexcept {
     std::size_t n = last - first;
     while (true) {
         auto left = i*2 + 1;
@@ -339,7 +339,7 @@ inline void make_heap(
     const RandomAccessIterator first,
     const RandomAccessIterator last,
     Compare comp = Compare{}
-) {
+) noexcept {
     for (auto i = (last - first)/2 - 1; i >= 0; --i) {
         heapify_down(first, last, i, comp);
     }
@@ -351,7 +351,7 @@ inline void heap_sort(
     RandomAccessIterator first,
     RandomAccessIterator last,
     Compare comp = Compare{}
-) {
+) noexcept {
     if (first == last) {
         return;
     }
