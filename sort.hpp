@@ -42,11 +42,11 @@ inline void insertion_sort(
     if (first == last) {
         return;
     }
-    auto iter = first;
-    for (++iter; iter != last; ++iter) {
-        const auto key(std::move(*iter));
-        auto insertPos = iter;
-        for (auto movePos = iter;
+    auto it = first;
+    for (++it; it != last; ++it) {
+        const auto key = std::move(*it);
+        auto insertPos = it;
+        for (auto movePos = it;
              movePos != first && comp(key, *(--movePos));
              --insertPos) {
             *insertPos = std::move(*movePos);
