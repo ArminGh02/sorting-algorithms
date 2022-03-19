@@ -392,12 +392,12 @@ inline void counting_sort(
 
 namespace detail {
 
-template<class RandomAccessIterator,
-         class Int = typename RandomAccessIterator::value_type,
+template<class BidirectionalIterator,
+         class Int = typename BidirectionalIterator::value_type,
          class = typename std::enable_if<std::is_integral<Int>::value>::type>
 inline void counting_sort_digit(
-    RandomAccessIterator first,
-    RandomAccessIterator last,
+    BidirectionalIterator first,
+    BidirectionalIterator last,
     Int exp,
     std::size_t n
 ) {
@@ -422,18 +422,29 @@ inline void counting_sort_digit(
 
 }
 
-template<class RandomAccessIterator,
-         class Int = typename RandomAccessIterator::value_type,
+template<class BidirectionalIterator,
+         class Int = typename BidirectionalIterator::value_type,
          class = typename std::enable_if<std::is_integral<Int>::value>::type>
 inline void radix_sort(
-    const RandomAccessIterator first,
-    const RandomAccessIterator last,
+    const BidirectionalIterator first,
+    const BidirectionalIterator last,
     Int max,
     std::size_t n
 ) {
     for (Int exp = 1; max / exp > 0; exp *= 10) {
         detail::counting_sort_digit(first, last, exp, n);
     }
+}
+
+template<class RandomAccessIterator,
+         class Int = typename RandomAccessIterator::value_type,
+         class = typename std::enable_if<std::is_integral<Int>::value>::type>
+inline void radix_sort(
+    const RandomAccessIterator first,
+    const RandomAccessIterator last,
+    Int max
+) {
+    radix_sort(first, last, max, last - first);
 }
 
 template<class ForwardIterator,
