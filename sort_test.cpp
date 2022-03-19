@@ -97,9 +97,6 @@ TEST_CASE("radix_sort & counting_sort") {
         to_sort.push_back(dist(gen));
     }
 
-    REQUIRE(to_sort.size() == ELEMENTS_COUNT);
-    REQUIRE(*std::max_element(to_sort.begin(), to_sort.end()) <= MAX_ELEMENT);
-
     SECTION("counting_sort") {
         alg::counting_sort(to_sort.begin(), to_sort.end(), MAX_ELEMENT);
         REQUIRE(std::is_sorted(to_sort.begin(), to_sort.end()));
@@ -120,10 +117,6 @@ TEST_CASE("bucket_sort") {
     for (std::size_t i = 0; i < ELEMENTS_COUNT; ++i) {
         to_sort.push_back(dist(gen));
     }
-
-    REQUIRE(to_sort.size() == ELEMENTS_COUNT);
-    REQUIRE(*std::min_element(to_sort.begin(), to_sort.end()) >= 0.0);
-    REQUIRE(*std::max_element(to_sort.begin(), to_sort.end()) < 1.0);
 
     alg::bucket_sort(to_sort.begin(), to_sort.end());
     REQUIRE(std::is_sorted(to_sort.begin(), to_sort.end()));
