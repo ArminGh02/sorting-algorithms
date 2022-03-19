@@ -129,20 +129,20 @@ TEST_CASE("bucket_sort") {
 TEST_CASE("quick_select") {
     constexpr std::size_t ELEMENTS_COUNT = 100;
 
-    std::vector<int> v;
-    v.reserve(ELEMENTS_COUNT);
+    std::vector<int> sample_array;
+    sample_array.reserve(ELEMENTS_COUNT);
 
     std::uniform_int_distribution<> dist;
     for (std::size_t i = 0; i < ELEMENTS_COUNT; ++i) {
-        v.push_back(dist(gen));
+        sample_array.push_back(dist(gen));
     }
 
-    auto sorted = v;
+    auto sorted = sample_array;
     std::sort(sorted.begin(), sorted.end());
 
-    for (std::size_t i = 0; i < v.size(); ++i) {
-        alg::quick_select(v.begin(), v.begin() + i, v.end());
-        REQUIRE(alg::is_pivot(v.begin(), v.begin() + i, v.end()));
-        REQUIRE(v[i] == sorted[i]);
+    for (std::size_t i = 0; i < sample_array.size(); ++i) {
+        alg::quick_select(sample_array.begin(), sample_array.begin() + i, sample_array.end());
+        REQUIRE(alg::is_pivot(sample_array.begin(), sample_array.begin() + i, sample_array.end()));
+        REQUIRE(sample_array[i] == sorted[i]);
     }
 }
