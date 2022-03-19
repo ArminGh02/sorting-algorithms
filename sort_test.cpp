@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <chrono>
+#include <list>
 #include <random>
 #include <vector>
 
@@ -69,6 +70,11 @@ TEST_CASE("general sorting functions") {
         SECTION("descending") {
             alg::quick_sort(to_sort.begin(), to_sort.end(), std::greater<int>());
             REQUIRE(std::is_sorted(to_sort.begin(), to_sort.end(), std::greater<int>()));
+        }
+        SECTION("bidirectional iterator") {
+            std::list<int> list(to_sort.begin(), to_sort.end());
+            alg::quick_sort(list.begin(), list.end());
+            REQUIRE(std::is_sorted(list.begin(), list.end()));
         }
     }
     SECTION("heap_sort") {
