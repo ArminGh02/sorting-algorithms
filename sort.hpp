@@ -453,7 +453,7 @@ template<class ForwardIterator,
 inline void bucket_sort(ForwardIterator first, ForwardIterator last, std::size_t n) {
     std::vector<std::forward_list<Float>> buckets(n);
     for (auto it = first; it != last; ++it) {
-        buckets[std::floor(*it * n)].push_back(*it);
+        buckets[std::floor(*it * n)].push_front(*it);
     }
 
     std::for_each(buckets.begin(), buckets.end(), [](std::forward_list<Float>& bucket) { bucket.sort(); });
