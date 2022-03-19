@@ -22,14 +22,20 @@ inline void bubble_sort(
         return;
     }
 
-    auto e = last;
-    for (--e; first != e; ++first) {
-        auto iter = first;
-        for (++iter; iter != last; ++iter) {
-            if (comp(*iter, *first)) {
-                std::iter_swap(iter, first);
+    --last;
+    while (first != last) {
+        auto current = first;
+        auto next = first;
+        auto last_modified = first;
+
+        for (++next; current != last; current = next, ++next) {
+            if (comp(*next, *current)) {
+                std::iter_swap(current, next);
+                last_modified = current;
             }
         }
+
+        last = last_modified;
     }
 }
 
@@ -135,12 +141,12 @@ template<class BidirectionalIterator,
          class Compare = std::less<T>>
 inline bool is_pivot(
     BidirectionalIterator first,
+    BidirectionalIterator pivot,
     BidirectionalIterator last,
-    const T& pivot,
     Compare comp = Compare{}
 ) noexcept {
-    return std::all_of(first, pivot, [&pivot](const T& element) { return element <= pivot; })
-        && std::all_of(++pivot, last, [&pivot](const T& element) { return element >= pivot; });
+    return std::all_of(first, pivot, [pivot](const T& element) { return element <= *pivot; })
+        && std::all_of(++pivot, last, [pivot](const T& element) { return element >= *pivot; });
 }
 
 template<class BidirectionalIterator,
