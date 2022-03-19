@@ -88,7 +88,7 @@ inline void merge(
     Compare comp = Compare{}
 ) {
     std::vector<typename RandomAccessIterator::value_type> temp;
-    temp.reserve(std::distance(first, last));
+    temp.reserve(last - first);
 
     auto left = first;
     auto right = mid;
@@ -124,7 +124,7 @@ inline void merge_sort(
     if (last - 1 <= first) {
         return;
     }
-    auto mid = first + std::distance(first, last)/2;
+    auto mid = first + (last - first)/2;
     merge_sort(first, mid, comp);
     merge_sort(mid, last, comp);
     merge(first, mid, last, comp);
@@ -185,7 +185,7 @@ inline RandomAccessIterator partition_random(
     Compare comp = Compare{}
 ) {
     static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-    std::uniform_int_distribution<> dist(0, std::distance(first, last) - 1);
+    std::uniform_int_distribution<> dist(0, last - first - 1);
 
     auto pivot = first + dist(gen);
     return partition(first, pivot, last, comp);
@@ -201,7 +201,7 @@ inline RandomAccessIterator find_median(
     Compare comp = Compare{}
 ) noexcept {
     insertion_sort(first, last, comp);
-    return first + (std::distance(first, last) - 1)/2;
+    return first + (last - first - 1)/2;
 }
 
 }  // namespace detail
@@ -229,7 +229,7 @@ inline void quick_select(
         return;
     }
 
-    std::size_t n = std::distance(first, last);
+    std::size_t n = last - first;
 
     std::size_t medians_count = std::ceil(static_cast<double>(n) / GROUP_SIZE);
     std::vector<T> medians;
