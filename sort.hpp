@@ -202,23 +202,24 @@ constexpr uint8_t operator"" _u8(uint64_t val) noexcept {
 }  // namespace literals
 
 template<class RandomAccessIterator,
-         class Compare = std::less<typename RandomAccessIterator::value_type>>
-inline RandomAccessIterator quick_select(
+         class T = typename RandomAccessIterator::value_type,
+         class Compare = std::less<T>>
+inline void quick_select(
     const RandomAccessIterator first,
+    const RandomAccessIterator kth,
     const RandomAccessIterator last,
-    std::size_t k,
     Compare comp = Compare{}
 ) {
     static constexpr auto GROUP_SIZE = 5_u8;
 
     if (last - 1 <= first) {
-        return last - 1;
+        return;
     }
 
     std::size_t n = std::distance(first, last);
 
     std::size_t medians_count = std::ceil(static_cast<double>(n) / GROUP_SIZE);
-    std::vector<typename RandomAccessIterator::value_type> medians;
+    std::vector<T> medians;
     medians.reserve(medians_count);
 
     std::size_t i;
@@ -229,20 +230,21 @@ inline RandomAccessIterator quick_select(
         medians.push_back(*detail::find_median(first + i*GROUP_SIZE, last));
     }
 
-    auto median_of_medians = (medians.size() == 1)
-        ? first + (last - first - 1) / 2
-        : std::find(first, last, *quick_select(medians.begin(), medians.end(), (medians.size() - 1) / 2, comp));
+    RandomAccessIterator median_of_medians;
+    if (medians.size() == 1) {
+        median_of_medians = first + (last - first - 1) / 2;
+    } else {
+        median_of_medians = medians.begin() + (medians.size() - 1)/2;
+        quick_select(medians.begin(), median_of_medians, medians.end(), comp);
+        median_of_medians = std::find(first, last, *median_of_medians);
+    }
 
     auto pivot = partition(first, median_of_medians, last, comp);
-    std::size_t index = std::distance(first, pivot);
-
-    if (k < index) {
-        return quick_select(first, pivot, k, comp);
+    if (kth < pivot) {
+        quick_select(first, kth, pivot, comp);
+    } else if (kth > pivot) {
+        quick_select(++pivot, kth, last, comp);
     }
-    if (k > index) {
-        return quick_select(++pivot, last, k - index - 1, comp);
-    }
-    return pivot;
 }
 
 namespace detail {
