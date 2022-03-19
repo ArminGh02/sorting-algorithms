@@ -136,7 +136,7 @@ TEST_CASE("quick_select") {
 
     for (std::size_t i = 0; i < v.size(); ++i) {
         alg::quick_select(v.begin(), v.begin() + i, v.end());
-        REQUIRE(alg::is_pivot(v.begin(), v.begin() + i, v.end()));
+        REQUIRE(alg::is_pivot(v.begin(), v.end(), *(v.begin() + i)));
         REQUIRE(v[i] == sorted[i]);
     }
 }

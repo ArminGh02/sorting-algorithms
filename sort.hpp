@@ -132,12 +132,12 @@ template<class BidirectionalIterator,
          class Compare = std::less<T>>
 inline bool is_pivot(
     BidirectionalIterator first,
-    BidirectionalIterator pivot,
     BidirectionalIterator last,
+    const T& pivot,
     Compare comp = Compare{}
 ) noexcept {
-    return std::all_of(first, pivot, [pivot](const T& element) { return element <= *pivot; })
-        && std::all_of(++pivot, last, [pivot](const T& element) { return element >= *pivot; });
+    return std::all_of(first, pivot, [&pivot](const T& element) { return element <= pivot; })
+        && std::all_of(++pivot, last, [&pivot](const T& element) { return element >= pivot; });
 }
 
 template<class BidirectionalIterator,
