@@ -340,7 +340,8 @@ inline void make_heap(
     const RandomAccessIterator last,
     Compare comp = Compare{}
 ) noexcept {
-    for (auto i = (last - first)/2 - 1; i >= 0; --i) {
+    // https://stackoverflow.com/a/3611799/15143062
+    for (std::size_t i = (last - first)/2; i-- > 0;) {
         heapify_down(first, last, i, comp);
     }
 }
