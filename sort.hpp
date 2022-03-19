@@ -21,6 +21,7 @@ inline void bubble_sort(
     if (first == last) {
         return;
     }
+
     auto e = last;
     for (--e; first != e; ++first) {
         auto iter = first;
@@ -43,6 +44,7 @@ inline void insertion_sort(
     if (first == last) {
         return;
     }
+
     auto it = first;
     for (++it; it != last; ++it) {
         const auto key = std::move(*it);
@@ -50,6 +52,7 @@ inline void insertion_sort(
         for (auto movePos = it; movePos != first && comp(key, *(--movePos)); --insertPos) {
             *insertPos = std::move(*movePos);
         }
+
         *insertPos = std::move(key);
     }
 }
@@ -64,6 +67,7 @@ inline void selection_sort(
     if (first == last) {
         return;
     }
+
     auto e = last;
     for (--e; first != e; ++first) {
         auto minPos = first;
@@ -73,6 +77,7 @@ inline void selection_sort(
                 minPos = it;
             }
         }
+
         std::iter_swap(first, minPos);
     }
 }
