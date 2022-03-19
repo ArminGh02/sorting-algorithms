@@ -58,8 +58,8 @@ inline void insertion_sort(
 template<class BidirectionalIterator,
          class Compare = std::less<typename BidirectionalIterator::value_type>>
 inline void selection_sort(
-    const BidirectionalIterator first,
-    const BidirectionalIterator last,
+    BidirectionalIterator first,
+    BidirectionalIterator last,
     Compare comp = Compare{}
 ) noexcept {
     if (first == last) {
