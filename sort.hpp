@@ -341,7 +341,7 @@ inline void make_heap(
     Compare comp = Compare{}
 ) noexcept {
     // https://stackoverflow.com/a/3611799/15143062
-    for (std::size_t i = (last - first)/2; i-- > 0;) {
+    for (std::size_t i = (last - first) / 2; i-- > 0;) {
         heapify_down(first, last, i, comp);
     }
 }
