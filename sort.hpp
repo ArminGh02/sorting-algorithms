@@ -33,12 +33,13 @@ inline void bubble_sort(
 }
 
 template<class BidirectionalIterator,
-         class Compare = std::less<typename BidirectionalIterator::value_type>>
+         class T = typename BidirectionalIterator::value_type,
+         class Compare = std::less<T>>
 inline void insertion_sort(
     const BidirectionalIterator first,
     const BidirectionalIterator last,
     Compare comp = Compare{}
-) noexcept {
+) noexcept(std::is_nothrow_move_assignable<T>::value) {
     if (first == last) {
         return;
     }
