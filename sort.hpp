@@ -268,7 +268,7 @@ inline void quick_sort_impl(
     if (last - 1 <= first) {
         return;
     }
-    auto pivot = partition_median(first, last, comp);
+    auto pivot = partition_random(first, last, comp);
     quick_sort_impl(first, pivot, iter_tag, comp);
     quick_sort_impl(++pivot, last, iter_tag, comp);
 }
