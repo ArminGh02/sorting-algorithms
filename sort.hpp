@@ -160,7 +160,7 @@ inline BidirectionalIterator partition_pivot_last(
     Compare comp = Compare{}
 ) noexcept {
     auto it = last;
-    return partition(first, last, --it, comp);
+    return partition(first, --it, last, comp);
 }
 
 template<class RandomAccessIterator,
@@ -174,7 +174,7 @@ inline RandomAccessIterator partition_random(
     std::uniform_int_distribution<> dist(0, std::distance(first, last) - 1);
 
     auto pivot = first + dist(gen);
-    return partition(first, last, pivot, comp);
+    return partition(first, pivot, last, comp);
 }
 
 namespace detail {
@@ -232,7 +232,7 @@ inline RandomAccessIterator quick_select(
         ? first + (last - first - 1) / 2
         : std::find(first, last, *quick_select(medians.begin(), medians.end(), (medians.size() - 1) / 2, comp));
 
-    auto pivot = partition(first, last, median_of_medians, comp);
+    auto pivot = partition(first, median_of_medians, last, comp);
     std::size_t index = std::distance(first, pivot);
 
     if (k < index) {
@@ -252,7 +252,7 @@ inline RandomAccessIterator partition_median(
     Compare comp = Compare{}
 ) {
     auto pivot = quick_select(first, last, std::distance(first, last) / 2, comp);
-    return partition(first, last, pivot, comp);
+    return partition(first, pivot, last, comp);
 }
 
 namespace detail {
