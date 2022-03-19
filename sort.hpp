@@ -244,17 +244,6 @@ inline RandomAccessIterator quick_select(
     return pivot;
 }
 
-template<class RandomAccessIterator,
-         class Compare = std::less<typename RandomAccessIterator::value_type>>
-inline RandomAccessIterator partition_median(
-    const RandomAccessIterator first,
-    const RandomAccessIterator last,
-    Compare comp = Compare{}
-) {
-    auto pivot = quick_select(first, last, std::distance(first, last) / 2, comp);
-    return partition(first, pivot, last, comp);
-}
-
 namespace detail {
 
 template<class RandomAccessIterator,
