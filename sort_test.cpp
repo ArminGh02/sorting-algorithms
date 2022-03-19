@@ -11,7 +11,7 @@
 static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
 
 TEST_CASE("general sorting functions") {
-    constexpr std::size_t ELEMENTS_COUNT = 500000;
+    constexpr std::size_t ELEMENTS_COUNT = 500;
 
     std::vector<int> to_sort;
     to_sort.reserve(ELEMENTS_COUNT);
@@ -86,12 +86,12 @@ TEST_CASE("general sorting functions") {
 }
 
 TEST_CASE("radix_sort & counting_sort") {
-    constexpr std::size_t ELEMENTS_COUNT = 500000;
+    constexpr std::size_t ELEMENTS_COUNT = 500;
 
     std::vector<unsigned> to_sort;
     to_sort.reserve(ELEMENTS_COUNT);
 
-    constexpr auto MAX_ELEMENT = 100000U;
+    constexpr auto MAX_ELEMENT = 100U;
     std::uniform_int_distribution<unsigned> dist(0U, MAX_ELEMENT);
     for (std::size_t i = 0; i < ELEMENTS_COUNT; ++i) {
         to_sort.push_back(dist(gen));
@@ -108,7 +108,7 @@ TEST_CASE("radix_sort & counting_sort") {
 }
 
 TEST_CASE("bucket_sort") {
-    constexpr std::size_t ELEMENTS_COUNT = 100000;
+    constexpr std::size_t ELEMENTS_COUNT = 100;
 
     std::vector<double> to_sort;
     to_sort.reserve(ELEMENTS_COUNT);
@@ -120,4 +120,25 @@ TEST_CASE("bucket_sort") {
 
     alg::bucket_sort(to_sort.begin(), to_sort.end());
     REQUIRE(std::is_sorted(to_sort.begin(), to_sort.end()));
+}
+
+TEST_CASE("quick_select") {
+    constexpr std::size_t ELEMENTS_COUNT = 100;
+
+    std::vector<int> v;
+    v.reserve(ELEMENTS_COUNT);
+
+    std::uniform_int_distribution<> dist;
+    for (std::size_t i = 0; i < ELEMENTS_COUNT; ++i) {
+        v.push_back(dist(gen));
+    }
+
+    auto sorted = v;
+    std::sort(sorted.begin(), sorted.end());
+
+    for (std::size_t i = 0; i < v.size(); ++i) {
+        alg::quick_select(v.begin(), v.begin() + i, v.end());
+        REQUIRE(alg::is_pivot(v.begin(), v.begin() + i, v.end()));
+        REQUIRE(v[i] == sorted[i]);
+    }
 }
