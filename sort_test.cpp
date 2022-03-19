@@ -11,12 +11,12 @@
 static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
 
 TEST_CASE("sorting algorithms functions for ints") {
-    std::uniform_int_distribution<> dist;
     constexpr std::size_t ELEMENTS_COUNT = 500000;
 
     std::vector<int> to_sort;
     to_sort.reserve(ELEMENTS_COUNT);
 
+    std::uniform_int_distribution<> dist;
     for (std::size_t i = 0; i < ELEMENTS_COUNT; ++i) {
         to_sort.push_back(dist(gen));
     }
@@ -86,14 +86,13 @@ TEST_CASE("sorting algorithms functions for ints") {
 }
 
 TEST_CASE("radix_sort & counting_sort") {
-    constexpr auto MAX_ELEMENT = 100000U;
-    std::uniform_int_distribution<unsigned> dist(0U, MAX_ELEMENT);
-
     constexpr std::size_t ELEMENTS_COUNT = 500000;
 
     std::vector<unsigned> to_sort;
     to_sort.reserve(ELEMENTS_COUNT);
 
+    constexpr auto MAX_ELEMENT = 100000U;
+    std::uniform_int_distribution<unsigned> dist(0U, MAX_ELEMENT);
     for (std::size_t i = 0; i < ELEMENTS_COUNT; ++i) {
         to_sort.push_back(dist(gen));
     }
@@ -112,12 +111,12 @@ TEST_CASE("radix_sort & counting_sort") {
 }
 
 TEST_CASE("bucket_sort") {
-    std::uniform_real_distribution<> dist;
-
     constexpr std::size_t ELEMENTS_COUNT = 100000;
+
     std::vector<double> to_sort;
     to_sort.reserve(ELEMENTS_COUNT);
 
+    std::uniform_real_distribution<> dist;
     for (std::size_t i = 0; i < ELEMENTS_COUNT; ++i) {
         to_sort.push_back(dist(gen));
     }
