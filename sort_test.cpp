@@ -10,7 +10,7 @@
 
 static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
 
-TEST_CASE("general sorting functions for ints") {
+TEST_CASE("general sorting functions") {
     constexpr std::size_t ELEMENTS_COUNT = 500000;
 
     std::vector<int> to_sort;
