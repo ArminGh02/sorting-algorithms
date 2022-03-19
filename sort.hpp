@@ -102,13 +102,10 @@ inline void merge(
         }
     }
 
-    while (left < mid) {
-        temp.push_back(std::move(*left));
-        ++left;
-    }
-    while (right < last) {
-        temp.push_back(std::move(*right));
-        ++right;
+    if (left < mid) {
+        std::move(left, mid, std::back_inserter(temp));
+    } else if (right < last) {
+        std::move(right, last, std::back_inserter(temp));
     }
 
     std::move(temp.begin(), temp.end(), first);
