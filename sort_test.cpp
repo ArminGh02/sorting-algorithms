@@ -21,8 +21,6 @@ TEST_CASE("general sorting functions") {
         to_sort.push_back(dist(gen));
     }
 
-    REQUIRE(to_sort.size() == ELEMENTS_COUNT);
-
     SECTION("bubble_sort") {
         SECTION("default compare") {
             alg::bubble_sort(to_sort.begin(), to_sort.end());
