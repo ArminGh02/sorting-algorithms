@@ -47,9 +47,7 @@ inline void insertion_sort(
     for (++it; it != last; ++it) {
         const auto key = std::move(*it);
         auto insertPos = it;
-        for (auto movePos = it;
-             movePos != first && comp(key, *(--movePos));
-             --insertPos) {
+        for (auto movePos = it; movePos != first && comp(key, *(--movePos)); --insertPos) {
             *insertPos = std::move(*movePos);
         }
         *insertPos = std::move(key);
