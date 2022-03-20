@@ -179,16 +179,16 @@ inline BidirectionalIterator partition(
     --last;
     std::iter_swap(pivot, last);
 
-    auto iter = first;
+    auto it = first;
     for (; first != last; ++first) {
         if (comp(*first, *last)) {
-            std::iter_swap(first, iter);
-            ++iter;
+            std::iter_swap(first, it);
+            ++it;
         }
     }
 
-    std::iter_swap(last, iter);
-    return iter;
+    std::iter_swap(last, it);
+    return it;
 }
 
 template<class BidirectionalIterator,
