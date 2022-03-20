@@ -506,7 +506,7 @@ inline void bucket_sort_impl(
         buckets[std::floor(*it * n)].push_back(*it);
     }
 
-    std::for_each(buckets.begin(), buckets.end(), [](std::forward_list<Float>& bucket) { bucket.sort(); });
+    std::for_each(buckets.begin(), buckets.end(), [](std::list<Float>& bucket) { bucket.sort(); });
 
     for (const auto& bucket : buckets) {
         for (auto element : bucket) {
