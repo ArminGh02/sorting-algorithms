@@ -549,7 +549,7 @@ template<class ForwardIterator,
          class Float = typename ForwardIterator::value_type,
          class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
 inline void bucket_sort(ForwardIterator first, ForwardIterator last, std::size_t n) {
-    using iter_category = std::iterator_traits<ForwardIterator>::iterator_category;
+    using iter_category = typename std::iterator_traits<ForwardIterator>::iterator_category;
     detail::bucket_sort_impl(first, last, iter_category{}, n);
 }
 
