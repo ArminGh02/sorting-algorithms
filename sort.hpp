@@ -10,7 +10,7 @@
 //    heap_sort         unstable    in-place
 //    counting_sort     stable      not-in-place
 //    radix_sort        stable      not-in-place
-//    bucket_sort       stable    not-in-place
+//    bucket_sort       stable      not-in-place
 //
 // And following sorting-related algorithms:
 //    merge
@@ -45,11 +45,9 @@ inline void bubble_sort(
         return;
     }
 
-    --last;
-    while (first != last) {
-        auto current = first;
-        auto next = first;
-        auto last_modified = first;
+    BidirectionalIterator current, next, last_modified;
+    for (--last; first != last; last = last_modified) {
+        current = next = last_modified = first;
 
         for (++next; current != last; current = next, ++next) {
             if (comp(*next, *current)) {
@@ -57,8 +55,6 @@ inline void bubble_sort(
                 last_modified = current;
             }
         }
-
-        last = last_modified;
     }
 }
 
