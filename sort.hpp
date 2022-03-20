@@ -488,10 +488,10 @@ inline void radix_sort(
     radix_sort(first, last, max, last - first);
 }
 
-template<class ForwardIterator,
-         class Float = typename ForwardIterator::value_type,
+template<class BidirectionalIterator,
+         class Float = typename BidirectionalIterator::value_type,
          class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
-inline void bucket_sort(ForwardIterator first, ForwardIterator last, std::size_t n) {
+inline void bucket_sort(BidirectionalIterator first, BidirectionalIterator last, std::size_t n) {
     std::vector<std::forward_list<Float>> buckets(n);
 
     // we traverse in reverse order so that the algorithm remain stable
