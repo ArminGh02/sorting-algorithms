@@ -550,14 +550,14 @@ template<class ForwardIterator,
          class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
 inline void bucket_sort(ForwardIterator first, ForwardIterator last, std::size_t n) {
     using iter_category = std::iterator_traits<ForwardIterator>::iterator_category;
-    return detail::bucket_sort_impl(first, last, iter_category{}, n);
+    detail::bucket_sort_impl(first, last, iter_category{}, n);
 }
 
 template<class RandomAccessIterator,
          class Float = typename RandomAccessIterator::value_type,
          class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
 inline void bucket_sort(RandomAccessIterator first, RandomAccessIterator last) {
-    return detail::bucket_sort_impl(first, last, std::bidirectional_iterator_tag{}, last - first);
+    detail::bucket_sort_impl(first, last, std::bidirectional_iterator_tag{}, last - first);
 }
 
 }  // namespace alg
