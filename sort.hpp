@@ -10,7 +10,7 @@
 ///    heap_sort         unstable    in-place
 ///    counting_sort     stable      not-in-place
 ///    radix_sort        stable      not-in-place
-///    bucket_sort       unstable    not-in-place
+///    bucket_sort       stable    not-in-place
 ///
 /// And following sorting-related algorithms:
 ///    merge
@@ -497,7 +497,10 @@ template<class ForwardIterator,
          class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
 inline void bucket_sort(ForwardIterator first, ForwardIterator last, std::size_t n) {
     std::vector<std::forward_list<Float>> buckets(n);
-    for (auto it = first; it != last; ++it) {
+
+    // we traverse in reverse order so that the algorithm remain stable
+    // https://stackoverflow.com/a/3611799/15143062
+    for (auto it = last; it-- != first;) {
         buckets[std::floor(*it * n)].push_front(*it);
     }
 
