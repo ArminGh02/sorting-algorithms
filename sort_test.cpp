@@ -122,8 +122,20 @@ TEST_CASE("bucket_sort") {
         to_sort.push_back(dist(gen));
     }
 
-    alg::bucket_sort(to_sort.begin(), to_sort.end());
-    REQUIRE(std::is_sorted(to_sort.begin(), to_sort.end()));
+    SECTION("random access iterator") {
+        alg::bucket_sort(to_sort.begin(), to_sort.end());
+        REQUIRE(std::is_sorted(to_sort.begin(), to_sort.end()));
+    }
+    SECTION("bidirectional iterator") {
+        std::list<double> list(to_sort.begin(), to_sort.end());
+        alg::bucket_sort(list.begin(), list.end(), list.size());
+        REQUIRE(std::is_sorted(list.begin(), list.end()));
+    }
+    SECTION("forward iterator") {
+        std::forward_list<double> forward_list(to_sort.begin(), to_sort.end());
+        alg::bucket_sort(forward_list.begin(), forward_list.end(), to_sort.size());
+        REQUIRE(std::is_sorted(forward_list.begin(), forward_list.end()));
+    }
 }
 
 TEST_CASE("quick_select") {
