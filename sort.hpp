@@ -488,10 +488,43 @@ inline void radix_sort(
     radix_sort(first, last, max, last - first);
 }
 
+namespace detail {
+
+template<class ForwardIterator,
+         class Float = typename ForwardIterator::value_type,
+         class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
+inline void bucket_sort_impl(
+    ForwardIterator first,
+    ForwardIterator last,
+    std::forward_iterator_tag,
+    std::size_t n
+) {
+    std::vector<std::list<Float>> buckets(n);
+
+    // https://stackoverflow.com/a/3611799/15143062
+    for (auto it = first; it != last; ++it) {
+        buckets[std::floor(*it * n)].push_back(*it);
+    }
+
+    std::for_each(buckets.begin(), buckets.end(), [](std::forward_list<Float>& bucket) { bucket.sort(); });
+
+    for (const auto& bucket : buckets) {
+        for (auto element : bucket) {
+            *first = element;
+            ++first;
+        }
+    }
+}
+
 template<class BidirectionalIterator,
          class Float = typename BidirectionalIterator::value_type,
          class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
-inline void bucket_sort(BidirectionalIterator first, BidirectionalIterator last, std::size_t n) {
+inline void bucket_sort_impl(
+    BidirectionalIterator first,
+    BidirectionalIterator last,
+    std::bidirectional_iterator_tag,
+    std::size_t n
+) {
     std::vector<std::forward_list<Float>> buckets(n);
 
     // we traverse in reverse order so that the algorithm remain stable
@@ -510,11 +543,21 @@ inline void bucket_sort(BidirectionalIterator first, BidirectionalIterator last,
     }
 }
 
+}
+
+template<class ForwardIterator,
+         class Float = typename ForwardIterator::value_type,
+         class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
+inline void bucket_sort(ForwardIterator first, ForwardIterator last, std::size_t n) {
+    using iter_category = std::iterator_traits<ForwardIterator>::iterator_category;
+    return detail::bucket_sort_impl(first, last, iter_category{}, n);
+}
+
 template<class RandomAccessIterator,
          class Float = typename RandomAccessIterator::value_type,
          class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
 inline void bucket_sort(RandomAccessIterator first, RandomAccessIterator last) {
-    return bucket_sort(first, last, last - first);
+    return detail::bucket_sort_impl(first, last, std::bidirectional_iterator_tag{}, last - first);
 }
 
 }  // namespace alg
