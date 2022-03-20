@@ -1,5 +1,5 @@
 //
-// author: Armin Gh (@arminghorbanian02@gmail.com)
+// author: Armin Gh (arminghorbanian02@gmail.com)
 //
 // This file implements following sorting algorithms:
 //    bubble_sort       stable      in-place
