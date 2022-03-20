@@ -1,25 +1,25 @@
-///
-/// \author Armin Gh
-///
-/// This file implements following sorting algorithms:
-///    bubble_sort       stable      in-place
-///    insertion_sort    stable      in-place
-///    selection_sort    unstable    in-place
-///    merge_sort        stable      not-in-place
-///    quick_sort        unstable    in-place
-///    heap_sort         unstable    in-place
-///    counting_sort     stable      not-in-place
-///    radix_sort        stable      not-in-place
-///    bucket_sort       stable    not-in-place
-///
-/// And following sorting-related algorithms:
-///    merge
-///    is_pivot
-///    partition
-///    quick_select
-///    heapify_down
-///    make_heap
-///
+//
+// author: Armin Gh
+//
+// This file implements following sorting algorithms:
+//    bubble_sort       stable      in-place
+//    insertion_sort    stable      in-place
+//    selection_sort    unstable    in-place
+//    merge_sort        stable      not-in-place
+//    quick_sort        unstable    in-place
+//    heap_sort         unstable    in-place
+//    counting_sort     stable      not-in-place
+//    radix_sort        stable      not-in-place
+//    bucket_sort       stable    not-in-place
+//
+// And following sorting-related algorithms:
+//    merge
+//    is_pivot
+//    partition
+//    quick_select
+//    heapify_down
+//    make_heap
+//
 
 #ifndef SORT_HPP
 #define SORT_HPP
