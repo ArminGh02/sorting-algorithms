@@ -14,7 +14,6 @@
 //
 // And following sorting-related algorithms:
 //    merge
-//    is_pivot
 //    partition
 //    quick_select
 //    heapify_down
@@ -273,19 +272,6 @@ inline void merge_sort(
 ) {
     std::allocator<T> allocator;
     merge_sort(first, last, allocator, comp);
-}
-
-template<class BidirectionalIterator,
-         class T = typename BidirectionalIterator::value_type,
-         class Compare = std::less<T>>
-inline bool is_pivot(
-    BidirectionalIterator first,
-    BidirectionalIterator pivot,
-    BidirectionalIterator last,
-    Compare comp = Compare{}
-) noexcept {
-    return std::all_of(first, pivot, [pivot](const T& element) { return element <= *pivot; })
-        && std::all_of(pivot, last, [pivot](const T& element) { return element >= *pivot; });
 }
 
 template<class BidirectionalIterator,

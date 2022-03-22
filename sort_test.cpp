@@ -153,8 +153,13 @@ TEST_CASE("quick_select") {
     std::sort(sorted.begin(), sorted.end());
 
     for (std::size_t i = 0; i < sample_array.size(); ++i) {
-        alg::quick_select(sample_array.begin(), sample_array.begin() + i, sample_array.end());
-        REQUIRE(alg::is_pivot(sample_array.begin(), sample_array.begin() + i, sample_array.end()));
+        auto current_pos = sample_array.begin() + i;
+        alg::quick_select(sample_array.begin(), current_pos, sample_array.end());
+
+        REQUIRE(std::is_partitioned(sample_array.begin(), sample_array.end(), [current_pos](int a) {
+            return a < *current_pos;
+        }));
+
         REQUIRE(sample_array[i] == sorted[i]);
     }
 }
