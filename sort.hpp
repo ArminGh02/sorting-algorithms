@@ -29,6 +29,8 @@
 #include <cmath>
 #include <forward_list>
 #include <iterator>
+#include <list>
+#include <memory>
 #include <random>
 #include <vector>
 
@@ -62,8 +64,8 @@ template<class BidirectionalIterator,
          class T = typename BidirectionalIterator::value_type,
          class Compare = std::less<T>>
 inline void insertion_sort(
-    const BidirectionalIterator first,
-    const BidirectionalIterator last,
+    BidirectionalIterator first,
+    BidirectionalIterator last,
     Compare comp = Compare{}
 ) noexcept(std::is_nothrow_move_assignable<T>::value) {
     if (first == last) {
@@ -107,52 +109,170 @@ inline void selection_sort(
     }
 }
 
-template<class RandomAccessIterator,
-         class Compare = std::less<typename RandomAccessIterator::value_type>>
-inline void merge(
-    const RandomAccessIterator first,
-    const RandomAccessIterator mid,
-    const RandomAccessIterator last,
+template<class InputIterator,
+         class OutputIterator,
+         class T = typename InputIterator::value_type,
+         class Compare = std::less<T>>
+inline OutputIterator merge(
+    InputIterator first1,
+    InputIterator last1,
+    InputIterator first2,
+    InputIterator last2,
+    OutputIterator result,
     Compare comp = Compare{}
-) {
-    std::vector<typename RandomAccessIterator::value_type> temp;
-    temp.reserve(last - first);
-
-    auto left = first;
-    auto right = mid;
-    while (left < mid && right < last) {
-        if (comp(*right, *left)) {
-            temp.push_back(std::move(*right));
-            ++right;
+) noexcept(std::is_nothrow_move_assignable<T>::value) {
+    while (first1 != last1 && first2 != last2) {
+        if (comp(*first1, *first2)) {
+            *result = std::move(*first1);
+            ++first1;
         } else {
-            temp.push_back(std::move(*left));
-            ++left;
+            *result = std::move(*first2);
+            ++first2;
+        }
+        ++result;
+    }
+
+    if (first1 == last1) {
+        return std::move(first2, last2, result);
+    } else {
+        return std::move(first1, last1, result);
+    }
+}
+
+namespace detail {
+
+template<class RandomAccessIterator,
+         std::size_t InsertionSortLimit,
+         class Compare = std::less<typename RandomAccessIterator::value_type>>
+class MergeSorter {
+
+public:
+    using pointer = typename RandomAccessIterator::pointer;
+
+    static void sort(
+        RandomAccessIterator first,
+        RandomAccessIterator last,
+        pointer buffer,
+        Compare comp = Compare{}
+    ) {
+        if (sort_impl(first, last, buffer, comp) == ResultLocation::buf) {
+            auto n = last - first;
+            std::move(buffer, buffer + n, first);
         }
     }
 
-    if (left < mid) {
-        std::move(left, mid, std::back_inserter(temp));
-    } else if (right < last) {
-        std::move(right, last, std::back_inserter(temp));
+private:
+    enum class ResultLocation : bool {
+        src,
+        buf,
+    };
+
+    static ResultLocation sort_impl(
+        RandomAccessIterator first,
+        RandomAccessIterator last,
+        pointer buffer,
+        Compare comp = Compare{}
+    ) {
+        auto n = last - first;
+
+        if (n <= 1) {
+            return ResultLocation::src;
+        }
+
+        if (n <= InsertionSortLimit) {
+            insertion_sort(first, last, comp);
+            return ResultLocation::src;
+        }
+
+        auto mid = n / 2;
+
+        auto first_half_location = sort_impl(first, first + mid, buffer, comp);
+        auto second_half_location = sort_impl(first + mid, last, buffer + mid, comp);
+
+        return merge_halves(first, last, mid, buffer, first_half_location, second_half_location, comp);
     }
 
-    std::move(temp.begin(), temp.end(), first);
+    static ResultLocation merge_halves(
+        RandomAccessIterator first,
+        RandomAccessIterator last,
+        std::size_t mid,
+        pointer buffer,
+        ResultLocation first_half_location,
+        ResultLocation second_half_location,
+        Compare comp = Compare{}
+    ) {
+        auto n = last - first;
+        if (first_half_location == ResultLocation::src) {
+            if (second_half_location == ResultLocation::src) {
+                merge(first, first + mid, first + mid, last, buffer, comp);
+                return ResultLocation::buf;
+            } else {
+                std::move(first, first + mid, buffer);
+                merge(buffer, buffer + mid, buffer + mid, buffer + n, first, comp);
+                return ResultLocation::src;
+            }
+        } else {
+            if (second_half_location == ResultLocation::src) {
+                std::move(first + mid, last, buffer + mid);
+                merge(buffer, buffer + mid, buffer + mid, buffer + n, first, comp);
+                return ResultLocation::src;
+            } else {
+                merge(buffer, buffer + mid, buffer + mid, buffer + n, first, comp);
+                return ResultLocation::src;
+            }
+        }
+    }
+};
+
 }
 
 template<class RandomAccessIterator,
-         class Compare = std::less<typename RandomAccessIterator::value_type>>
-inline void merge_sort(
-    const RandomAccessIterator first,
-    const RandomAccessIterator last,
+         class T = typename RandomAccessIterator::value_type,
+         class Compare = std::less<T>>
+inline void merge_sort_buf(
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    T* buffer,
     Compare comp = Compare{}
 ) {
-    if (last - 1 <= first) {
+    detail::MergeSorter<RandomAccessIterator, 16, Compare>::sort(first, last, buffer, comp);
+}
+
+template<class RandomAccessIterator,
+         class Allocator,
+         class T = typename RandomAccessIterator::value_type,
+         class Compare = std::less<T>>
+inline void merge_sort(
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    Allocator& allocator,
+    Compare comp = Compare{}
+) {
+    auto n = last - first;
+
+    if (n <= 1) {
         return;
     }
-    auto mid = first + (last - first)/2;
-    merge_sort(first, mid, comp);
-    merge_sort(mid, last, comp);
-    merge(first, mid, last, comp);
+
+    auto buffer = std::allocator_traits<Allocator>::allocate(allocator, n);
+    std::uninitialized_fill(buffer, buffer + n, T());
+
+    merge_sort_buf(first, last, buffer, comp);
+
+    std::allocator_traits<Allocator>::destroy(allocator, buffer);
+    std::allocator_traits<Allocator>::deallocate(allocator, buffer, n);
+}
+
+template<class RandomAccessIterator,
+         class T = typename RandomAccessIterator::value_type,
+         class Compare = std::less<T>>
+inline void merge_sort(
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    Compare comp = Compare{}
+) {
+    std::allocator<T> allocator;
+    merge_sort(first, last, allocator, comp);
 }
 
 template<class BidirectionalIterator,
@@ -205,8 +325,8 @@ inline BidirectionalIterator partition_pivot_last(
 template<class RandomAccessIterator,
          class Compare = std::less<typename RandomAccessIterator::value_type>>
 inline RandomAccessIterator partition_random(
-    const RandomAccessIterator first,
-    const RandomAccessIterator last,
+    RandomAccessIterator first,
+    RandomAccessIterator last,
     Compare comp = Compare{}
 ) {
     static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
@@ -221,8 +341,8 @@ namespace detail {
 template<class RandomAccessIterator,
          class Compare = std::less<typename RandomAccessIterator::value_type>>
 inline RandomAccessIterator find_median(
-    const RandomAccessIterator first,
-    const RandomAccessIterator last,
+    RandomAccessIterator first,
+    RandomAccessIterator last,
     Compare comp = Compare{}
 ) noexcept {
     insertion_sort(first, last, comp);
@@ -243,9 +363,9 @@ template<class RandomAccessIterator,
          class T = typename RandomAccessIterator::value_type,
          class Compare = std::less<T>>
 inline void quick_select(
-    const RandomAccessIterator first,
-    const RandomAccessIterator kth,
-    const RandomAccessIterator last,
+    RandomAccessIterator first,
+    RandomAccessIterator kth,
+    RandomAccessIterator last,
     Compare comp = Compare{}
 ) {
     static constexpr auto GROUP_SIZE = 5_u8;
@@ -290,9 +410,9 @@ namespace detail {
 template<class RandomAccessIterator,
          class Compare = std::less<typename RandomAccessIterator::value_type>>
 inline void quick_sort_impl(
-    const RandomAccessIterator first,
-    const RandomAccessIterator last,
-    const std::random_access_iterator_tag iter_tag,
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    std::random_access_iterator_tag iter_tag,
     Compare comp = Compare{}
 ) {
     if (last - 1 <= first) {
@@ -325,8 +445,8 @@ inline void quick_sort_impl(
 template<class BidirectionalIterator,
          class Compare = std::less<typename BidirectionalIterator::value_type>>
 inline void quick_sort(
-    const BidirectionalIterator first,
-    const BidirectionalIterator last,
+    BidirectionalIterator first,
+    BidirectionalIterator last,
     Compare comp = Compare{}
 ) {
     using iter_category = typename std::iterator_traits<BidirectionalIterator>::iterator_category;
@@ -336,8 +456,8 @@ inline void quick_sort(
 template<class RandomAccessIterator,
          class Compare = std::less<typename RandomAccessIterator::value_type>>
 inline void heapify_down(
-    const RandomAccessIterator first,
-    const RandomAccessIterator last,
+    RandomAccessIterator first,
+    RandomAccessIterator last,
     std::size_t i,
     Compare comp = Compare{}
 ) noexcept {
@@ -366,8 +486,8 @@ inline void heapify_down(
 template<class RandomAccessIterator,
          class Compare = std::less<typename RandomAccessIterator::value_type>>
 inline void make_heap(
-    const RandomAccessIterator first,
-    const RandomAccessIterator last,
+    RandomAccessIterator first,
+    RandomAccessIterator last,
     Compare comp = Compare{}
 ) noexcept {
     // https://stackoverflow.com/a/3611799/15143062
@@ -467,8 +587,8 @@ template<class BidirectionalIterator,
          class Int = typename BidirectionalIterator::value_type,
          class = typename std::enable_if<std::is_integral<Int>::value>::type>
 inline void radix_sort(
-    const BidirectionalIterator first,
-    const BidirectionalIterator last,
+    BidirectionalIterator first,
+    BidirectionalIterator last,
     Int max,
     std::size_t n
 ) {
@@ -481,8 +601,8 @@ template<class RandomAccessIterator,
          class Int = typename RandomAccessIterator::value_type,
          class = typename std::enable_if<std::is_integral<Int>::value>::type>
 inline void radix_sort(
-    const RandomAccessIterator first,
-    const RandomAccessIterator last,
+    RandomAccessIterator first,
+    RandomAccessIterator last,
     Int max
 ) {
     radix_sort(first, last, max, last - first);
