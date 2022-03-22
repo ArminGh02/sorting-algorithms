@@ -664,7 +664,7 @@ template<class RandomAccessIterator,
          class Float = typename RandomAccessIterator::value_type,
          class = typename std::enable_if<std::is_floating_point<Float>::value>::type>
 inline void bucket_sort(RandomAccessIterator first, RandomAccessIterator last) {
-    detail::bucket_sort_impl(first, last, std::bidirectional_iterator_tag{}, last - first);
+    detail::bucket_sort_impl(first, last, std::random_access_iterator_tag{}, last - first);
 }
 
 }  // namespace alg
