@@ -221,9 +221,10 @@ private:
             }
         }
     }
-};
 
-}
+};  // class MergeSorter
+
+}  // namespace detail
 
 template<class RandomAccessIterator,
          class T = typename RandomAccessIterator::value_type,
