@@ -42,7 +42,7 @@ template<
 inline void bubble_sort(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) noexcept {
     if (first == last) {
         return;
@@ -53,7 +53,7 @@ inline void bubble_sort(
         current = next = last_modified = first;
 
         for (++next; current != last; current = next, ++next) {
-            if (comp(*next, *current)) {
+            if (compare(*next, *current)) {
                 std::iter_swap(current, next);
                 last_modified = current;
             }
@@ -69,7 +69,7 @@ template<
 inline void insertion_sort(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) noexcept(std::is_nothrow_move_assignable<T>::value) {
     if (first == last) {
         return;
@@ -79,7 +79,7 @@ inline void insertion_sort(
     for (++it; it != last; ++it) {
         const auto key = std::move(*it);
         auto insertPos = it;
-        for (auto movePos = it; movePos != first && comp(key, *(--movePos)); --insertPos) {
+        for (auto movePos = it; movePos != first && compare(key, *(--movePos)); --insertPos) {
             *insertPos = std::move(*movePos);
         }
 
@@ -94,7 +94,7 @@ template<
 inline void selection_sort(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) noexcept {
     if (first == last) {
         return;
@@ -105,7 +105,7 @@ inline void selection_sort(
         auto minPos = first;
         auto it = first;
         for (++it; it != last; ++it) {
-            if (comp(*it, *minPos)) {
+            if (compare(*it, *minPos)) {
                 minPos = it;
             }
         }
@@ -126,10 +126,10 @@ inline OutputIterator merge(
     InputIterator first2,
     InputIterator last2,
     OutputIterator result,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) noexcept(std::is_nothrow_move_assignable<T>::value) {
     while (first1 != last1 && first2 != last2) {
-        if (comp(*first1, *first2)) {
+        if (compare(*first1, *first2)) {
             *result = std::move(*first1);
             ++first1;
         } else {
@@ -162,9 +162,9 @@ public:
         RandomAccessIterator first,
         RandomAccessIterator last,
         pointer buffer,
-        Compare comp = Compare{}
+        Compare compare = Compare{}
     ) {
-        if (sort_impl(first, last, buffer, comp) == ResultLocation::buf) {
+        if (sort_impl(first, last, buffer, compare) == ResultLocation::buf) {
             auto n = last - first;
             std::move(buffer, buffer + n, first);
         }
@@ -180,7 +180,7 @@ private:
         RandomAccessIterator first,
         RandomAccessIterator last,
         pointer buffer,
-        Compare comp = Compare{}
+        Compare compare = Compare{}
     ) {
         auto n = last - first;
 
@@ -189,16 +189,16 @@ private:
         }
 
         if (n <= InsertionSortLimit) {
-            insertion_sort(first, last, comp);
+            insertion_sort(first, last, compare);
             return ResultLocation::src;
         }
 
         auto mid = n / 2;
 
-        auto first_half_location = sort_impl(first, first + mid, buffer, comp);
-        auto second_half_location = sort_impl(first + mid, last, buffer + mid, comp);
+        auto first_half_location = sort_impl(first, first + mid, buffer, compare);
+        auto second_half_location = sort_impl(first + mid, last, buffer + mid, compare);
 
-        return merge_halves(first, last, mid, buffer, first_half_location, second_half_location, comp);
+        return merge_halves(first, last, mid, buffer, first_half_location, second_half_location, compare);
     }
 
     static ResultLocation merge_halves(
@@ -208,25 +208,25 @@ private:
         pointer buffer,
         ResultLocation first_half_location,
         ResultLocation second_half_location,
-        Compare comp = Compare{}
+        Compare compare = Compare{}
     ) {
         auto n = last - first;
         if (first_half_location == ResultLocation::src) {
             if (second_half_location == ResultLocation::src) {
-                merge(first, first + mid, first + mid, last, buffer, comp);
+                merge(first, first + mid, first + mid, last, buffer, compare);
                 return ResultLocation::buf;
             } else {
                 std::move(first, first + mid, buffer);
-                merge(buffer, buffer + mid, buffer + mid, buffer + n, first, comp);
+                merge(buffer, buffer + mid, buffer + mid, buffer + n, first, compare);
                 return ResultLocation::src;
             }
         } else {
             if (second_half_location == ResultLocation::src) {
                 std::move(first + mid, last, buffer + mid);
-                merge(buffer, buffer + mid, buffer + mid, buffer + n, first, comp);
+                merge(buffer, buffer + mid, buffer + mid, buffer + n, first, compare);
                 return ResultLocation::src;
             } else {
-                merge(buffer, buffer + mid, buffer + mid, buffer + n, first, comp);
+                merge(buffer, buffer + mid, buffer + mid, buffer + n, first, compare);
                 return ResultLocation::src;
             }
         }
@@ -245,9 +245,9 @@ inline void merge_sort_buf(
     RandomAccessIterator first,
     RandomAccessIterator last,
     T* buffer,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) {
-    detail::MergeSorter<RandomAccessIterator, 16, Compare>::sort(first, last, buffer, comp);
+    detail::MergeSorter<RandomAccessIterator, 16, Compare>::sort(first, last, buffer, compare);
 }
 
 template<
@@ -260,7 +260,7 @@ inline void merge_sort(
     RandomAccessIterator first,
     RandomAccessIterator last,
     Allocator& allocator,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) {
     auto n = last - first;
 
@@ -271,7 +271,7 @@ inline void merge_sort(
     auto buffer = std::allocator_traits<Allocator>::allocate(allocator, n);
     std::uninitialized_fill(buffer, buffer + n, T());
 
-    merge_sort_buf(first, last, buffer, comp);
+    merge_sort_buf(first, last, buffer, compare);
 
     std::allocator_traits<Allocator>::destroy(allocator, buffer);
     std::allocator_traits<Allocator>::deallocate(allocator, buffer, n);
@@ -285,10 +285,10 @@ template<
 inline void merge_sort(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) {
     std::allocator<T> allocator;
-    merge_sort(first, last, allocator, comp);
+    merge_sort(first, last, allocator, compare);
 }
 
 template<
@@ -299,14 +299,14 @@ inline BidirectionalIterator partition(
     BidirectionalIterator first,
     BidirectionalIterator pivot,
     BidirectionalIterator last,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) noexcept {
     --last;
     std::iter_swap(pivot, last);
 
     auto it = first;
     for (; first != last; ++first) {
-        if (comp(*first, *last)) {
+        if (compare(*first, *last)) {
             std::iter_swap(first, it);
             ++it;
         }
@@ -323,10 +323,10 @@ template<
 inline BidirectionalIterator partition_pivot_last(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) noexcept {
     auto it = last;
-    return partition(first, --it, last, comp);
+    return partition(first, --it, last, compare);
 }
 
 template<
@@ -336,13 +336,13 @@ template<
 inline RandomAccessIterator partition_random(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) {
     static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<> dist(0, last - first - 1);
 
     auto pivot = first + dist(gen);
-    return partition(first, pivot, last, comp);
+    return partition(first, pivot, last, compare);
 }
 
 namespace detail {
@@ -354,9 +354,9 @@ template<
 inline RandomAccessIterator find_median(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) noexcept {
-    insertion_sort(first, last, comp);
+    insertion_sort(first, last, compare);
     return first + (last - first - 1)/2;
 }
 
@@ -379,7 +379,7 @@ inline void quick_select(
     RandomAccessIterator first,
     RandomAccessIterator kth,
     RandomAccessIterator last,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) {
     static constexpr auto GROUP_SIZE = 5_u8;
 
@@ -406,15 +406,15 @@ inline void quick_select(
         median_of_medians = first + (last - first - 1) / 2;
     } else {
         median_of_medians = medians.begin() + (medians.size() - 1)/2;
-        quick_select(medians.begin(), median_of_medians, medians.end(), comp);
+        quick_select(medians.begin(), median_of_medians, medians.end(), compare);
         median_of_medians = std::find(first, last, *median_of_medians);
     }
 
-    auto pivot = partition(first, median_of_medians, last, comp);
+    auto pivot = partition(first, median_of_medians, last, compare);
     if (kth < pivot) {
-        quick_select(first, kth, pivot, comp);
+        quick_select(first, kth, pivot, compare);
     } else if (kth > pivot) {
-        quick_select(++pivot, kth, last, comp);
+        quick_select(++pivot, kth, last, compare);
     }
 }
 
@@ -428,14 +428,14 @@ inline void quick_sort_impl(
     RandomAccessIterator first,
     RandomAccessIterator last,
     std::random_access_iterator_tag iter_tag,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) {
     if (last - 1 <= first) {
         return;
     }
-    auto pivot = partition_random(first, last, comp);
-    quick_sort_impl(first, pivot, iter_tag, comp);
-    quick_sort_impl(++pivot, last, iter_tag, comp);
+    auto pivot = partition_random(first, last, compare);
+    quick_sort_impl(first, pivot, iter_tag, compare);
+    quick_sort_impl(++pivot, last, iter_tag, compare);
 }
 
 template<
@@ -446,15 +446,15 @@ inline void quick_sort_impl(
     BidirectionalIterator first,
     BidirectionalIterator last,
     const std::bidirectional_iterator_tag iter_tag,
-    Compare comp = std::less<typename BidirectionalIterator::value_type>()
+    Compare compare = std::less<typename BidirectionalIterator::value_type>()
 ) noexcept {
     if (first == last || first == --last) {
         return;
     }
     ++last;
-    auto pivot = partition_pivot_last(first, last, comp);
-    quick_sort_impl(first, pivot, iter_tag, comp);
-    quick_sort_impl(++pivot, last, iter_tag, comp);
+    auto pivot = partition_pivot_last(first, last, compare);
+    quick_sort_impl(first, pivot, iter_tag, compare);
+    quick_sort_impl(++pivot, last, iter_tag, compare);
 }
 
 }  // namespace detail
@@ -466,10 +466,10 @@ template<
 inline void quick_sort(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) {
     using iter_category = typename std::iterator_traits<BidirectionalIterator>::iterator_category;
-    return detail::quick_sort_impl(first, last, iter_category{}, comp);
+    return detail::quick_sort_impl(first, last, iter_category{}, compare);
 }
 
 template<
@@ -480,7 +480,7 @@ inline void heapify_down(
     RandomAccessIterator first,
     RandomAccessIterator last,
     std::size_t i,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) noexcept {
     std::size_t n = last - first;
     while (true) {
@@ -488,10 +488,10 @@ inline void heapify_down(
         auto right = i*2 + 2;
 
         auto largest = i;
-        if (left < n && comp(*(first + largest), *(first + left))) {
+        if (left < n && compare(*(first + largest), *(first + left))) {
             largest = left;
         }
-        if (right < n && comp(*(first + largest), *(first + right))) {
+        if (right < n && compare(*(first + largest), *(first + right))) {
             largest = right;
         }
 
@@ -511,11 +511,11 @@ template<
 inline void make_heap(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) noexcept {
     // https://stackoverflow.com/a/3611799/15143062
     for (std::size_t i = (last - first) / 2; i-- > 0;) {
-        heapify_down(first, last, i, comp);
+        heapify_down(first, last, i, compare);
     }
 }
 
@@ -526,15 +526,15 @@ template<
 inline void heap_sort(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    Compare comp = Compare{}
+    Compare compare = Compare{}
 ) noexcept {
     if (first == last) {
         return;
     }
-    alg::make_heap(first, last, comp);
+    alg::make_heap(first, last, compare);
     for (--last; last != first; --last) {
         std::iter_swap(first, last);
-        heapify_down(first, last, 0, comp);
+        heapify_down(first, last, 0, compare);
     }
 }
 
