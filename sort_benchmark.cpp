@@ -13,9 +13,9 @@ struct SortFunc { enum type {
     bubble_sort,
     insertion_sort,
     selection_sort,
+    heap_sort,
     merge_sort,
     quick_sort,
-    heap_sort,
     std_sort,
     std_stable_sort,
 }; };
@@ -26,9 +26,9 @@ static std::unordered_map<SortFunc::type, FuncPtr> func_map = {
     { SortFunc::bubble_sort,     [](auto first, auto last) { alg::bubble_sort(first, last); } },
     { SortFunc::insertion_sort,  [](auto first, auto last) { alg::insertion_sort(first, last); } },
     { SortFunc::selection_sort,  [](auto first, auto last) { alg::selection_sort(first, last); } },
+    { SortFunc::heap_sort,       [](auto first, auto last) { alg::heap_sort(first, last); } },
     { SortFunc::merge_sort,      [](auto first, auto last) { alg::merge_sort(first, last); } },
     { SortFunc::quick_sort,      [](auto first, auto last) { alg::quick_sort(first, last); } },
-    { SortFunc::heap_sort,       [](auto first, auto last) { alg::heap_sort(first, last); } },
     { SortFunc::std_sort,        [](auto first, auto last) { std::sort(first, last); } },
     { SortFunc::std_stable_sort, [](auto first, auto last) { std::stable_sort(first, last); } },
 };
@@ -98,9 +98,9 @@ BENCHMARK(bm_sort_random_vector)
     ->Arg(SortFunc::bubble_sort)
     ->Arg(SortFunc::insertion_sort)
     ->Arg(SortFunc::selection_sort)
+    ->Arg(SortFunc::heap_sort)
     ->Arg(SortFunc::merge_sort)
     ->Arg(SortFunc::quick_sort)
-    ->Arg(SortFunc::heap_sort)
     ->Arg(SortFunc::std_sort)
     ->Arg(SortFunc::std_stable_sort);
 
@@ -108,9 +108,9 @@ BENCHMARK(bm_sort_sorted_vector)
     ->Arg(SortFunc::bubble_sort)
     ->Arg(SortFunc::insertion_sort)
     ->Arg(SortFunc::selection_sort)
+    ->Arg(SortFunc::heap_sort)
     ->Arg(SortFunc::merge_sort)
     ->Arg(SortFunc::quick_sort)
-    ->Arg(SortFunc::heap_sort)
     ->Arg(SortFunc::std_sort)
     ->Arg(SortFunc::std_stable_sort);
 
@@ -118,9 +118,9 @@ BENCHMARK(bm_sort_reverse_sorted_vector)
     ->Arg(SortFunc::bubble_sort)
     ->Arg(SortFunc::insertion_sort)
     ->Arg(SortFunc::selection_sort)
+    ->Arg(SortFunc::heap_sort)
     ->Arg(SortFunc::merge_sort)
     ->Arg(SortFunc::quick_sort)
-    ->Arg(SortFunc::heap_sort)
     ->Arg(SortFunc::std_sort)
     ->Arg(SortFunc::std_stable_sort);
 
