@@ -124,5 +124,4 @@ BENCHMARK(bm_sort_reverse_sorted_vector)
     ->Arg(SortFunc::std_sort)
     ->Arg(SortFunc::std_stable_sort);
 
-
 BENCHMARK_MAIN();
