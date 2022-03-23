@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <chrono>
-#include <functional>
 #include <random>
 #include <unordered_map>
 #include <vector>
