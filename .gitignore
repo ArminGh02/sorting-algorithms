@@ -51,3 +51,5 @@
 # Ignore all local history of files
 .history
 .ionide
+
+include/benchmark/export.h
