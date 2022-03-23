@@ -6,7 +6,7 @@
 //    insertion_sort    stable      in-place
 //    selection_sort    unstable    in-place
 //    merge_sort        stable      not-in-place
-//    quick_sort        unstable    in-place
+//    quick_sort        unstable    in-place        This is actually an introsort variant of quick sort
 //    heap_sort         unstable    in-place
 //    counting_sort     stable      not-in-place
 //    radix_sort        stable      not-in-place
@@ -115,6 +115,72 @@ inline void selection_sort(
 }
 
 template<
+    class RandomAccessIterator,
+    class Compare = std::less<typename RandomAccessIterator::value_type>
+>
+inline void heapify_down(
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    std::size_t i,
+    Compare compare = Compare{}
+) noexcept {
+    std::size_t n = last - first;
+    while (true) {
+        auto left = i*2 + 1;
+        auto right = i*2 + 2;
+
+        auto largest = i;
+        if (left < n && compare(*(first + largest), *(first + left))) {
+            largest = left;
+        }
+        if (right < n && compare(*(first + largest), *(first + right))) {
+            largest = right;
+        }
+
+        if (largest == i) {
+            return;
+        }
+
+        std::iter_swap(first + largest, first + i);
+        i = largest;
+    }
+}
+
+template<
+    class RandomAccessIterator,
+    class Compare = std::less<typename RandomAccessIterator::value_type>
+>
+inline void make_heap(
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    Compare compare = Compare{}
+) noexcept {
+    // https://stackoverflow.com/a/3611799/15143062
+    for (std::size_t i = (last - first) / 2; i-- > 0;) {
+        heapify_down(first, last, i, compare);
+    }
+}
+
+template<
+    class RandomAccessIterator,
+    class Compare = std::less<typename RandomAccessIterator::value_type>
+>
+inline void heap_sort(
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    Compare compare = Compare{}
+) noexcept {
+    if (first == last) {
+        return;
+    }
+    alg::make_heap(first, last, compare);
+    for (--last; last != first; --last) {
+        std::iter_swap(first, last);
+        heapify_down(first, last, 0, compare);
+    }
+}
+
+template<
     class InputIterator,
     class OutputIterator,
     class T = typename InputIterator::value_type,
@@ -150,13 +216,14 @@ namespace detail {
 
 template<
     class RandomAccessIterator,
-    std::size_t InsertionSortLimit,
+    uint8_t InsertionSortLimit,
     class Compare = std::less<typename RandomAccessIterator::value_type>
 >
 class MergeSorter {
 
 public:
     using pointer = typename RandomAccessIterator::pointer;
+    using difference_type = typename RandomAccessIterator::difference_type;
 
     static void sort(
         RandomAccessIterator first,
@@ -204,7 +271,7 @@ private:
     static ResultLocation merge_halves(
         RandomAccessIterator first,
         RandomAccessIterator last,
-        std::size_t mid,
+        difference_type mid,
         pointer buffer,
         ResultLocation first_half_location,
         ResultLocation second_half_location,
@@ -420,6 +487,38 @@ inline void quick_select(
 
 namespace detail {
 
+template<class Int>
+inline Int log2(Int n) {
+	int i;
+	for (i = 0; n != 0; ++i) {
+		n >>= 1;
+    }
+	return i - 1;
+}
+
+template<
+    class RandomAccessIterator,
+    class Compare = std::less<typename RandomAccessIterator::value_type>
+>
+inline void quick_sort_impl_helper(
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    int recursion_count,
+    Compare compare = Compare{}
+) {
+    if (last - first <= 16) {
+        insertion_sort(first, last, compare);
+        return;
+    }
+    if (recursion_count == 0) {
+        heap_sort(first, last, compare);
+        return;
+    }
+    auto pivot = partition_random(first, last, compare);
+    quick_sort_impl_helper(first, pivot, recursion_count - 1, compare);
+    quick_sort_impl_helper(++pivot, last, recursion_count - 1, compare);
+}
+
 template<
     class RandomAccessIterator,
     class Compare = std::less<typename RandomAccessIterator::value_type>
@@ -430,12 +529,8 @@ inline void quick_sort_impl(
     std::random_access_iterator_tag iter_tag,
     Compare compare = Compare{}
 ) {
-    if (last - 1 <= first) {
-        return;
-    }
-    auto pivot = partition_random(first, last, compare);
-    quick_sort_impl(first, pivot, iter_tag, compare);
-    quick_sort_impl(++pivot, last, iter_tag, compare);
+    auto recursion_count = 2 * detail::log2(last - first);
+    quick_sort_impl_helper(first, last, recursion_count, compare);
 }
 
 template<
@@ -445,7 +540,7 @@ template<
 inline void quick_sort_impl(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    const std::bidirectional_iterator_tag iter_tag,
+    std::bidirectional_iterator_tag iter_tag,
     Compare compare = std::less<typename BidirectionalIterator::value_type>()
 ) noexcept {
     if (first == last || first == --last) {
@@ -470,72 +565,6 @@ inline void quick_sort(
 ) {
     using iter_category = typename std::iterator_traits<BidirectionalIterator>::iterator_category;
     return detail::quick_sort_impl(first, last, iter_category{}, compare);
-}
-
-template<
-    class RandomAccessIterator,
-    class Compare = std::less<typename RandomAccessIterator::value_type>
->
-inline void heapify_down(
-    RandomAccessIterator first,
-    RandomAccessIterator last,
-    std::size_t i,
-    Compare compare = Compare{}
-) noexcept {
-    std::size_t n = last - first;
-    while (true) {
-        auto left = i*2 + 1;
-        auto right = i*2 + 2;
-
-        auto largest = i;
-        if (left < n && compare(*(first + largest), *(first + left))) {
-            largest = left;
-        }
-        if (right < n && compare(*(first + largest), *(first + right))) {
-            largest = right;
-        }
-
-        if (largest == i) {
-            return;
-        }
-
-        std::iter_swap(first + largest, first + i);
-        i = largest;
-    }
-}
-
-template<
-    class RandomAccessIterator,
-    class Compare = std::less<typename RandomAccessIterator::value_type>
->
-inline void make_heap(
-    RandomAccessIterator first,
-    RandomAccessIterator last,
-    Compare compare = Compare{}
-) noexcept {
-    // https://stackoverflow.com/a/3611799/15143062
-    for (std::size_t i = (last - first) / 2; i-- > 0;) {
-        heapify_down(first, last, i, compare);
-    }
-}
-
-template<
-    class RandomAccessIterator,
-    class Compare = std::less<typename RandomAccessIterator::value_type>
->
-inline void heap_sort(
-    RandomAccessIterator first,
-    RandomAccessIterator last,
-    Compare compare = Compare{}
-) noexcept {
-    if (first == last) {
-        return;
-    }
-    alg::make_heap(first, last, compare);
-    for (--last; last != first; --last) {
-        std::iter_swap(first, last);
-        heapify_down(first, last, 0, compare);
-    }
 }
 
 template<
