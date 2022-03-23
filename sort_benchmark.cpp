@@ -43,6 +43,12 @@ static std::vector<int> random_int_vector(std::size_t size) {
     return vec;
 }
 
+static std::vector<int> sorted_random_int_vector(std::size_t size) {
+    auto vec = random_int_vector(size);
+    std::sort(vec.begin(), vec.end());
+    return vec;
+}
+
 static void bm_sort_random_vector(benchmark::State& state) {
     static auto vec = random_int_vector(10000);
     for (auto _ : state) {
@@ -56,7 +62,30 @@ static void bm_sort_random_vector(benchmark::State& state) {
     }
 }
 
+static void bm_sort_sorted_vector(benchmark::State& state) {
+    static auto vec = sorted_random_int_vector(10000);
+    for (auto _ : state) {
+        state.PauseTiming();
+        auto tmp = vec;
+        auto func_as_enum = static_cast<SortFunc::type>(state.range(0));
+        auto sort_func = func_map[func_as_enum];
+        state.ResumeTiming();
+
+        sort_func(tmp.begin(), tmp.end());
+    }
+}
+
 BENCHMARK(bm_sort_random_vector)
+    ->Arg(SortFunc::bubble_sort)
+    ->Arg(SortFunc::insertion_sort)
+    ->Arg(SortFunc::selection_sort)
+    ->Arg(SortFunc::merge_sort)
+    ->Arg(SortFunc::quick_sort)
+    ->Arg(SortFunc::heap_sort)
+    ->Arg(SortFunc::std_sort)
+    ->Arg(SortFunc::std_stable_sort);
+
+BENCHMARK(bm_sort_sorted_vector)
     ->Arg(SortFunc::bubble_sort)
     ->Arg(SortFunc::insertion_sort)
     ->Arg(SortFunc::selection_sort)
