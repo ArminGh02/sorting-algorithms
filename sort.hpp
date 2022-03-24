@@ -35,14 +35,11 @@
 
 namespace alg {
 
-template<
-    class BidirectionalIterator,
-    class Compare = std::less<typename BidirectionalIterator::value_type>
->
+template<class BidirectionalIterator, class Compare>
 inline void bubble_sort(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    Compare compare = Compare{}
+    Compare compare
 ) noexcept {
     if (first == last) {
         return;
@@ -61,15 +58,21 @@ inline void bubble_sort(
     }
 }
 
+template<class BidirectionalIterator>
+inline void bubble_sort(BidirectionalIterator first, BidirectionalIterator last) noexcept {
+    using value_type = typename BidirectionalIterator::value_type;
+    bubble_sort(first, last, std::less<value_type>());
+}
+
 template<
     class BidirectionalIterator,
-    class T = typename BidirectionalIterator::value_type,
-    class Compare = std::less<T>
+    class Compare,
+    class T = typename BidirectionalIterator::value_type
 >
 inline void insertion_sort(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    Compare compare = Compare{}
+    Compare compare
 ) noexcept(std::is_nothrow_move_assignable<T>::value) {
     if (first == last) {
         return;
@@ -89,12 +92,20 @@ inline void insertion_sort(
 
 template<
     class BidirectionalIterator,
-    class Compare = std::less<typename BidirectionalIterator::value_type>
+    class T = typename BidirectionalIterator::value_type
 >
+inline void insertion_sort(
+    BidirectionalIterator first,
+    BidirectionalIterator last
+) noexcept(std::is_nothrow_move_assignable<T>::value) {
+    insertion_sort(first, last, std::less<T>());
+}
+
+template<class BidirectionalIterator, class Compare>
 inline void selection_sort(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    Compare compare = Compare{}
+    Compare compare
 ) noexcept {
     if (first == last) {
         return;
@@ -114,15 +125,21 @@ inline void selection_sort(
     }
 }
 
-template<
-    class RandomAccessIterator,
-    class Compare = std::less<typename RandomAccessIterator::value_type>
->
+template<class BidirectionalIterator>
+inline void selection_sort(
+    BidirectionalIterator first,
+    BidirectionalIterator last
+) noexcept {
+    using value_type = typename BidirectionalIterator::value_type;
+    selection_sort(first, last, std::less<value_type>());
+}
+
+template<class RandomAccessIterator, class Compare>
 inline void heapify_down(
     RandomAccessIterator first,
     RandomAccessIterator last,
     std::size_t i,
-    Compare compare = Compare{}
+    Compare compare
 ) noexcept {
     std::size_t n = last - first;
     while (true) {
@@ -146,14 +163,21 @@ inline void heapify_down(
     }
 }
 
-template<
-    class RandomAccessIterator,
-    class Compare = std::less<typename RandomAccessIterator::value_type>
->
+template<class RandomAccessIterator>
+inline void heapify_down(
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    std::size_t i
+) noexcept {
+    using value_type = typename RandomAccessIterator::value_type;
+    heapify_down(first, last, i, std::less<value_type>());
+}
+
+template<class RandomAccessIterator, class Compare>
 inline void make_heap(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    Compare compare = Compare{}
+    Compare compare
 ) noexcept {
     // https://stackoverflow.com/a/3611799/15143062
     for (std::size_t i = (last - first) / 2; i-- > 0;) {
@@ -161,14 +185,17 @@ inline void make_heap(
     }
 }
 
-template<
-    class RandomAccessIterator,
-    class Compare = std::less<typename RandomAccessIterator::value_type>
->
+template<class RandomAccessIterator>
+inline void make_heap(RandomAccessIterator first, RandomAccessIterator last) noexcept {
+    using value_type = typename RandomAccessIterator::value_type;
+    make_heap(first, last, std::less<value_type>());
+}
+
+template<class RandomAccessIterator, class Compare>
 inline void heap_sort(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    Compare compare = Compare{}
+    Compare compare
 ) noexcept {
     if (first == last) {
         return;
@@ -180,11 +207,20 @@ inline void heap_sort(
     }
 }
 
+template<class RandomAccessIterator>
+inline void heap_sort(
+    RandomAccessIterator first,
+    RandomAccessIterator last
+) noexcept {
+    using value_type = typename RandomAccessIterator::value_type;
+    heap_sort(first, last, std::less<value_type>());
+}
+
 template<
     class InputIterator,
     class OutputIterator,
-    class T = typename InputIterator::value_type,
-    class Compare = std::less<T>
+    class Compare,
+    class T = typename InputIterator::value_type
 >
 inline OutputIterator merge(
     InputIterator first1,
@@ -192,7 +228,7 @@ inline OutputIterator merge(
     InputIterator first2,
     InputIterator last2,
     OutputIterator result,
-    Compare compare = Compare{}
+    Compare compare
 ) noexcept(std::is_nothrow_move_assignable<T>::value) {
     while (first1 != last1 && first2 != last2) {
         if (compare(*first1, *first2)) {
@@ -212,12 +248,27 @@ inline OutputIterator merge(
     }
 }
 
+template<
+    class InputIterator,
+    class OutputIterator,
+    class T = typename InputIterator::value_type
+>
+inline OutputIterator merge(
+    InputIterator first1,
+    InputIterator last1,
+    InputIterator first2,
+    InputIterator last2,
+    OutputIterator result
+) noexcept(std::is_nothrow_move_assignable<T>::value) {
+    merge(first1, last1, first2, last2, result, std::less<T>());
+}
+
 namespace detail {
 
 template<
     class RandomAccessIterator,
-    uint8_t InsertionSortLimit,
-    class Compare = std::less<typename RandomAccessIterator::value_type>
+    class Compare,
+    uint8_t InsertionSortLimit
 >
 class MergeSorter {
 
@@ -229,7 +280,7 @@ public:
         RandomAccessIterator first,
         RandomAccessIterator last,
         pointer buffer,
-        Compare compare = Compare{}
+        Compare compare
     ) {
         if (sort_impl(first, last, buffer, compare) == ResultLocation::buf) {
             auto n = last - first;
@@ -247,7 +298,7 @@ private:
         RandomAccessIterator first,
         RandomAccessIterator last,
         pointer buffer,
-        Compare compare = Compare{}
+        Compare compare
     ) {
         auto n = last - first;
 
@@ -275,7 +326,7 @@ private:
         pointer buffer,
         ResultLocation first_half_location,
         ResultLocation second_half_location,
-        Compare compare = Compare{}
+        Compare compare
     ) {
         auto n = last - first;
         if (first_half_location == ResultLocation::src) {
@@ -305,30 +356,43 @@ private:
 
 template<
     class RandomAccessIterator,
-    class T = typename RandomAccessIterator::value_type,
-    class Compare = std::less<T>
+    class Compare,
+    class T = typename RandomAccessIterator::value_type
 >
 inline void merge_sort_buf(
     RandomAccessIterator first,
     RandomAccessIterator last,
     T* buffer,
-    Compare compare = Compare{}
+    Compare compare
 ) {
-    detail::MergeSorter<RandomAccessIterator, 16, Compare>::sort(first, last, buffer, compare);
+    detail::MergeSorter<RandomAccessIterator, Compare, 16>::sort(first, last, buffer, compare);
+}
+
+template<
+    class RandomAccessIterator,
+    class T = typename RandomAccessIterator::value_type
+>
+inline void merge_sort_buf(
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    T* buffer
+) {
+    merge_sort_buf(first, last, buffer, std::less<T>());
 }
 
 template<
     class RandomAccessIterator,
     class Allocator,
-    class T = typename RandomAccessIterator::value_type,
-    class Compare = std::less<T>
+    class Compare
 >
 inline void merge_sort(
     RandomAccessIterator first,
     RandomAccessIterator last,
     Allocator& allocator,
-    Compare compare = Compare{}
+    Compare compare
 ) {
+    using value_type = typename RandomAccessIterator::value_type;
+
     auto n = last - first;
 
     if (n <= 1) {
@@ -336,7 +400,7 @@ inline void merge_sort(
     }
 
     auto buffer = std::allocator_traits<Allocator>::allocate(allocator, n);
-    std::uninitialized_fill(buffer, buffer + n, T());
+    std::uninitialized_fill(buffer, buffer + n, value_type());
 
     merge_sort_buf(first, last, buffer, compare);
 
@@ -344,29 +408,43 @@ inline void merge_sort(
     std::allocator_traits<Allocator>::deallocate(allocator, buffer, n);
 }
 
-template<
-    class RandomAccessIterator,
-    class T = typename RandomAccessIterator::value_type,
-    class Compare = std::less<T>
->
+template<class RandomAccessIterator, class Compare>
 inline void merge_sort(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    Compare compare = Compare{}
+    Compare compare
 ) {
-    std::allocator<T> allocator;
+    using value_type = typename RandomAccessIterator::value_type;
+    std::allocator<value_type> allocator;
     merge_sort(first, last, allocator, compare);
 }
 
-template<
-    class BidirectionalIterator,
-    class Compare = std::less<typename BidirectionalIterator::value_type>
->
+template<class RandomAccessIterator, class Allocator>
+inline void merge_sort(
+    RandomAccessIterator first,
+    RandomAccessIterator last,
+    Allocator& allocator
+) {
+    using value_type = typename RandomAccessIterator::value_type;
+    merge_sort(first, last, allocator, std::less<value_type>());
+}
+
+template<class RandomAccessIterator>
+inline void merge_sort(
+    RandomAccessIterator first,
+    RandomAccessIterator last
+) {
+    using value_type = typename RandomAccessIterator::value_type;
+    std::allocator<value_type> allocator;
+    merge_sort(first, last, allocator, std::less<value_type>());
+}
+
+template<class BidirectionalIterator, class Compare>
 inline BidirectionalIterator partition(
     BidirectionalIterator first,
     BidirectionalIterator pivot,
     BidirectionalIterator last,
-    Compare compare = Compare{}
+    Compare compare
 ) noexcept {
     --last;
     std::iter_swap(pivot, last);
@@ -383,27 +461,40 @@ inline BidirectionalIterator partition(
     return it;
 }
 
-template<
-    class BidirectionalIterator,
-    class Compare = std::less<typename BidirectionalIterator::value_type>
->
+template<class BidirectionalIterator>
+inline BidirectionalIterator partition(
+    BidirectionalIterator first,
+    BidirectionalIterator pivot,
+    BidirectionalIterator last
+) noexcept {
+    using value_type = typename BidirectionalIterator::value_type;
+    partition(first, pivot, last, std::less<value_type>());
+}
+
+template<class BidirectionalIterator, class Compare>
 inline BidirectionalIterator partition_pivot_last(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    Compare compare = Compare{}
+    Compare compare
 ) noexcept {
     auto it = last;
     return partition(first, --it, last, compare);
 }
 
-template<
-    class RandomAccessIterator,
-    class Compare = std::less<typename RandomAccessIterator::value_type>
->
+template<class BidirectionalIterator>
+inline BidirectionalIterator partition_pivot_last(
+    BidirectionalIterator first,
+    BidirectionalIterator last
+) noexcept {
+    using value_type = typename BidirectionalIterator::value_type;
+    partition_pivot_last(first, last, std::less<value_type>());
+}
+
+template<class RandomAccessIterator, class Compare>
 inline RandomAccessIterator partition_random(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    Compare compare = Compare{}
+    Compare compare
 ) {
     static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<> dist(0, last - first - 1);
@@ -412,16 +503,22 @@ inline RandomAccessIterator partition_random(
     return partition(first, pivot, last, compare);
 }
 
+template<class RandomAccessIterator>
+inline RandomAccessIterator partition_random(
+    RandomAccessIterator first,
+    RandomAccessIterator last
+) {
+    using value_type = typename RandomAccessIterator::value_type;
+    partition_random(first, last, std::less<value_type>());
+}
+
 namespace detail {
 
-template<
-    class RandomAccessIterator,
-    class Compare = std::less<typename RandomAccessIterator::value_type>
->
+template<class RandomAccessIterator, class Compare>
 inline RandomAccessIterator find_median(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    Compare compare = Compare{}
+    Compare compare
 ) noexcept {
     insertion_sort(first, last, compare);
     return first + (last - first - 1)/2;
@@ -437,17 +534,15 @@ constexpr uint8_t operator"" _u8(uint64_t val) noexcept {
 
 }  // namespace literals
 
-template<
-    class RandomAccessIterator,
-    class T = typename RandomAccessIterator::value_type,
-    class Compare = std::less<T>
->
+template<class RandomAccessIterator, class Compare>
 inline void quick_select(
     RandomAccessIterator first,
     RandomAccessIterator kth,
     RandomAccessIterator last,
-    Compare compare = Compare{}
+    Compare compare
 ) {
+    using value_type = typename RandomAccessIterator::value_type;
+
     static constexpr auto GROUP_SIZE = 5_u8;
 
     if (last - 1 <= first) {
@@ -457,15 +552,15 @@ inline void quick_select(
     std::size_t n = last - first;
 
     std::size_t medians_count = std::ceil(static_cast<double>(n) / GROUP_SIZE);
-    std::vector<T> medians;
+    std::vector<value_type> medians;
     medians.reserve(medians_count);
 
     std::size_t i;
     for (i = 0; i < n / GROUP_SIZE; ++i) {
-        medians.push_back(*detail::find_median(first + i*GROUP_SIZE, first + (i + 1)*GROUP_SIZE));
+        medians.push_back(*detail::find_median(first + i*GROUP_SIZE, first + (i + 1)*GROUP_SIZE, compare));
     }
     if (i*GROUP_SIZE < n) {
-        medians.push_back(*detail::find_median(first + i*GROUP_SIZE, last));
+        medians.push_back(*detail::find_median(first + i*GROUP_SIZE, last, compare));
     }
 
     RandomAccessIterator median_of_medians;
@@ -485,32 +580,39 @@ inline void quick_select(
     }
 }
 
+template<class RandomAccessIterator>
+inline void quick_select(
+    RandomAccessIterator first,
+    RandomAccessIterator kth,
+    RandomAccessIterator last
+) {
+    using value_type = typename RandomAccessIterator::value_type;
+    quick_select(first, kth, last, std::less<value_type>());
+}
+
 namespace detail {
 
 template<class Int>
 inline Int log2(Int n) {
-	int i;
+	Int i;
 	for (i = 0; n != 0; ++i) {
 		n >>= 1;
     }
 	return i - 1;
 }
 
-template<
-    class RandomAccessIterator,
-    class Compare = std::less<typename RandomAccessIterator::value_type>
->
+template<class RandomAccessIterator, class Compare>
 inline void quick_sort_impl_helper(
     RandomAccessIterator first,
     RandomAccessIterator last,
     int recursion_count,
-    Compare compare = Compare{}
+    Compare compare
 ) {
     if (last - first <= 16) {
         insertion_sort(first, last, compare);
         return;
     }
-    if (recursion_count == 0) {
+    if (recursion_count <= 0) {
         heap_sort(first, last, compare);
         return;
     }
@@ -519,29 +621,23 @@ inline void quick_sort_impl_helper(
     quick_sort_impl_helper(++pivot, last, recursion_count - 1, compare);
 }
 
-template<
-    class RandomAccessIterator,
-    class Compare = std::less<typename RandomAccessIterator::value_type>
->
+template<class RandomAccessIterator, class Compare>
 inline void quick_sort_impl(
     RandomAccessIterator first,
     RandomAccessIterator last,
     std::random_access_iterator_tag iter_tag,
-    Compare compare = Compare{}
+    Compare compare
 ) {
     auto recursion_count = 2 * detail::log2(last - first);
     quick_sort_impl_helper(first, last, recursion_count, compare);
 }
 
-template<
-    class BidirectionalIterator,
-    class Compare = std::less<typename BidirectionalIterator::value_type>
->
+template<class BidirectionalIterator, class Compare>
 inline void quick_sort_impl(
     BidirectionalIterator first,
     BidirectionalIterator last,
     std::bidirectional_iterator_tag iter_tag,
-    Compare compare = std::less<typename BidirectionalIterator::value_type>()
+    Compare compare
 ) noexcept {
     if (first == last || first == --last) {
         return;
@@ -554,17 +650,23 @@ inline void quick_sort_impl(
 
 }  // namespace detail
 
-template<
-    class BidirectionalIterator,
-    class Compare = std::less<typename BidirectionalIterator::value_type>
->
+template<class BidirectionalIterator, class Compare>
 inline void quick_sort(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    Compare compare = Compare{}
+    Compare compare
 ) {
     using iter_category = typename std::iterator_traits<BidirectionalIterator>::iterator_category;
     return detail::quick_sort_impl(first, last, iter_category{}, compare);
+}
+
+template<class BidirectionalIterator>
+inline void quick_sort(
+    BidirectionalIterator first,
+    BidirectionalIterator last
+) {
+    using value_type = typename BidirectionalIterator::value_type;
+    quick_sort(first, last, std::less<value_type>());
 }
 
 template<
