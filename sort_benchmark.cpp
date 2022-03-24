@@ -29,59 +29,94 @@ struct TestType { enum type {
     reverse_sorted,
 }; };
 
-using FuncPtr = void (*)(std::vector<int>::iterator, std::vector<int>::iterator);
+template<class Iterator>
+using SortFuncPtr = void (*)(Iterator, Iterator);
 
-static std::unordered_map<SortFunc::type, FuncPtr> func_map = {
-    { SortFunc::bubble_sort,     [](auto first, auto last) { alg::bubble_sort(first, last); } },
-    { SortFunc::insertion_sort,  [](auto first, auto last) { alg::insertion_sort(first, last); } },
-    { SortFunc::selection_sort,  [](auto first, auto last) { alg::selection_sort(first, last); } },
-    { SortFunc::heap_sort,       [](auto first, auto last) { alg::heap_sort(first, last); } },
-    { SortFunc::merge_sort,      [](auto first, auto last) { alg::merge_sort(first, last); } },
-    { SortFunc::quick_sort,      [](auto first, auto last) { alg::quick_sort(first, last); } },
-    { SortFunc::std_sort,        [](auto first, auto last) { std::sort(first, last); } },
-    { SortFunc::std_stable_sort, [](auto first, auto last) { std::stable_sort(first, last); } },
+template<class Iterator>
+static std::unordered_map<SortFunc::type, SortFuncPtr<Iterator>> func_map = {
+    { SortFunc::bubble_sort,     alg::bubble_sort },
+    { SortFunc::insertion_sort,  alg::insertion_sort },
+    { SortFunc::selection_sort,  alg::selection_sort },
+    { SortFunc::heap_sort,       alg::heap_sort },
+    { SortFunc::merge_sort,      alg::merge_sort },
+    { SortFunc::quick_sort,      alg::quick_sort },
+    { SortFunc::std_sort,        std::sort },
+    { SortFunc::std_stable_sort, std::stable_sort },
 };
 
-template<typename Int>
+template<class Int>
 static std::vector<Int> random_int_vector(std::size_t size, Int max = std::numeric_limits<Int>::max()) {
-    std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+    static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<Int> dist(std::numeric_limits<Int>::min(), max);
 
     std::vector<Int> vec(size);
-    std::generate(vec.begin(), vec.end(), [&gen, &dist]() -> Int { return dist(gen); });
+    std::generate(vec.begin(), vec.end(), [&dist]() {
+        return dist(gen);
+    });
 
     return vec;
 }
 
-template<typename T>
-std::vector<T> get_random_vector(std::size_t size) = delete;
+static std::string random_string(std::size_t min_len, std::size_t max_len) {
+    const char charset[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+
+    static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+    static std::uniform_int_distribution<std::size_t> index_dist(0U, sizeof(charset) - 2);
+    std::uniform_int_distribution<std::size_t> length_dist(min_len, max_len);
+
+    auto len = length_dist(gen);
+    std::string str(len, '\0');
+
+    std::generate_n(str.begin(), len, [charset]() {
+        return charset[index_dist(gen)];
+    });
+
+    return str;
+}
+
+template<class T>
+static std::vector<T> get_random_vector(std::size_t size) = delete;
 
 template<>
 inline std::vector<int> get_random_vector<int>(std::size_t size) {
     return random_int_vector<int>(size);
 }
 
-template<typename T>
+template<>
+inline std::vector<std::string> get_random_vector<std::string>(std::size_t size) {
+    std::vector<std::string> vec(size);
+
+    std::generate(vec.begin(), vec.end(), []() {
+        return random_string(0U, 1000U);
+    });
+
+    return vec;
+}
+
+template<class T>
 static void bm_sort_vector(benchmark::State& state) {
     static auto vec = get_random_vector<T>(10000U);
 
     auto test = static_cast<TestType::type>(state.range(0));
     switch (test) {
-        case TestType::random_shuffled:
-            break;
-        case TestType::sorted:
-            std::sort(vec.begin(), vec.end());
-            break;
-        case TestType::reverse_sorted:
-            std::sort(vec.rbegin(), vec.rend());
-            break;
+    case TestType::random_shuffled:
+        break;
+    case TestType::sorted:
+        std::sort(vec.begin(), vec.end());
+        break;
+    case TestType::reverse_sorted:
+        std::sort(vec.rbegin(), vec.rend());
+        break;
     }
 
     for (auto _ : state) {
         state.PauseTiming();
         auto tmp = vec;
         auto func_as_enum = static_cast<SortFunc::type>(state.range(1));
-        auto sort_func = func_map[func_as_enum];
+        auto sort_func = func_map<typename std::vector<T>::iterator>[func_as_enum];
         state.ResumeTiming();
 
         sort_func(tmp.begin(), tmp.end());
@@ -90,18 +125,18 @@ static void bm_sort_vector(benchmark::State& state) {
 
 static void bm_counting_sort_and_radix_sort(benchmark::State& state) {
     constexpr auto MAX = 1000U;
-    static auto vec = random_int_vector(10000, MAX);
+    static auto vec = random_int_vector(10000U, MAX);
 
     auto test = static_cast<TestType::type>(state.range(0));
     switch (test) {
-        case TestType::random_shuffled:
-            break;
-        case TestType::sorted:
-            std::sort(vec.begin(), vec.end());
-            break;
-        case TestType::reverse_sorted:
-            std::sort(vec.rbegin(), vec.rend());
-            break;
+    case TestType::random_shuffled:
+        break;
+    case TestType::sorted:
+        std::sort(vec.begin(), vec.end());
+        break;
+    case TestType::reverse_sorted:
+        std::sort(vec.rbegin(), vec.rend());
+        break;
     }
 
     for (auto _ : state) {
@@ -132,6 +167,34 @@ static void bm_counting_sort_and_radix_sort(benchmark::State& state) {
 }
 
 BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Args({ TestType::random_shuffled, SortFunc::bubble_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::insertion_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::selection_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::heap_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::merge_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::quick_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::std_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::std_stable_sort })
+
+    ->Args({ TestType::sorted, SortFunc::bubble_sort })
+    ->Args({ TestType::sorted, SortFunc::insertion_sort })
+    ->Args({ TestType::sorted, SortFunc::selection_sort })
+    ->Args({ TestType::sorted, SortFunc::heap_sort })
+    ->Args({ TestType::sorted, SortFunc::merge_sort })
+    ->Args({ TestType::sorted, SortFunc::quick_sort })
+    ->Args({ TestType::sorted, SortFunc::std_sort })
+    ->Args({ TestType::sorted, SortFunc::std_stable_sort })
+
+    ->Args({ TestType::reverse_sorted, SortFunc::bubble_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::insertion_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::selection_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::heap_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::merge_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::quick_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::std_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::std_stable_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
     ->Args({ TestType::random_shuffled, SortFunc::bubble_sort })
     ->Args({ TestType::random_shuffled, SortFunc::insertion_sort })
     ->Args({ TestType::random_shuffled, SortFunc::selection_sort })
