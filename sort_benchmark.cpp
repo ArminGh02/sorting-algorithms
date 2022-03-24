@@ -19,12 +19,12 @@ struct SortFunc { enum type {
     counting_sort,
     radix_sort,
     bucket_sort,
-    std_sort,
     std_stable_sort,
+    std_sort,
 }; };
 
 struct TestType { enum type {
-    random_shuffled,
+    shuffled,
     sorted,
     reverse_sorted,
 }; };
@@ -40,8 +40,8 @@ static std::unordered_map<SortFunc::type, SortFuncPtr<Iterator>> func_map = {
     { SortFunc::heap_sort,       alg::heap_sort },
     { SortFunc::merge_sort,      alg::merge_sort },
     { SortFunc::quick_sort,      alg::quick_sort },
-    { SortFunc::std_sort,        std::sort },
     { SortFunc::std_stable_sort, std::stable_sort },
+    { SortFunc::std_sort,        std::sort },
 };
 
 template<class Int>
@@ -102,7 +102,7 @@ static void bm_sort_vector(benchmark::State& state) {
 
     auto test = static_cast<TestType::type>(state.range(0));
     switch (test) {
-    case TestType::random_shuffled:
+    case TestType::shuffled:
         break;
     case TestType::sorted:
         std::sort(vec.begin(), vec.end());
@@ -129,7 +129,7 @@ static void bm_counting_sort_and_radix_sort(benchmark::State& state) {
 
     auto test = static_cast<TestType::type>(state.range(0));
     switch (test) {
-    case TestType::random_shuffled:
+    case TestType::shuffled:
         break;
     case TestType::sorted:
         std::sort(vec.begin(), vec.end());
@@ -166,76 +166,253 @@ static void bm_counting_sort_and_radix_sort(benchmark::State& state) {
     }
 }
 
+//////////////////////
+// std::vector<int> //
+//////////////////////
 BENCHMARK_TEMPLATE1(bm_sort_vector, int)
-    ->Args({ TestType::random_shuffled, SortFunc::bubble_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::insertion_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::selection_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::heap_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::merge_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::quick_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::std_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::std_stable_sort })
+    ->Name("sorting a std::vector<int> of size 10000 - shuffled - alg::bubble_sort")
+    ->Args({ TestType::shuffled, SortFunc::bubble_sort });
 
-    ->Args({ TestType::sorted, SortFunc::bubble_sort })
-    ->Args({ TestType::sorted, SortFunc::insertion_sort })
-    ->Args({ TestType::sorted, SortFunc::selection_sort })
-    ->Args({ TestType::sorted, SortFunc::heap_sort })
-    ->Args({ TestType::sorted, SortFunc::merge_sort })
-    ->Args({ TestType::sorted, SortFunc::quick_sort })
-    ->Args({ TestType::sorted, SortFunc::std_sort })
-    ->Args({ TestType::sorted, SortFunc::std_stable_sort })
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - shuffled - alg::insertion_sort")
+    ->Args({ TestType::shuffled, SortFunc::insertion_sort });
 
-    ->Args({ TestType::reverse_sorted, SortFunc::bubble_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::insertion_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::selection_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::heap_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::merge_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::quick_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::std_sort })
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - shuffled - alg::selection_sort")
+    ->Args({ TestType::shuffled, SortFunc::selection_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - shuffled - alg::heap_sort")
+    ->Args({ TestType::shuffled, SortFunc::heap_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - shuffled - alg::merge_sort")
+    ->Args({ TestType::shuffled, SortFunc::merge_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - shuffled - alg::quick_sort")
+    ->Args({ TestType::shuffled, SortFunc::quick_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - shuffled - std::stable_sort")
+    ->Args({ TestType::shuffled, SortFunc::std_stable_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - shuffled - std::sort")
+    ->Args({ TestType::shuffled, SortFunc::std_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - sorted - alg::bubble_sort")
+    ->Args({ TestType::sorted, SortFunc::bubble_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - sorted - alg::insertion_sort")
+    ->Args({ TestType::sorted, SortFunc::insertion_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - sorted - alg::selection_sort")
+    ->Args({ TestType::sorted, SortFunc::selection_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - sorted - alg::heap_sort")
+    ->Args({ TestType::sorted, SortFunc::heap_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - sorted - alg::merge_sort")
+    ->Args({ TestType::sorted, SortFunc::merge_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - sorted - quick_sort")
+    ->Args({ TestType::sorted, SortFunc::quick_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - sorted - std::stable_sort")
+    ->Args({ TestType::sorted, SortFunc::std_stable_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - sorted - std::sort")
+    ->Args({ TestType::sorted, SortFunc::std_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - reverse sorted - alg::bubble_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::bubble_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - reverse sorted - alg::insertion_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::insertion_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - reverse sorted - alg::selection_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::selection_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - reverse sorted - alg::heap_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::heap_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - reverse sorted - alg::merge_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::merge_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - reverse sorted - alg::quick_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::quick_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - reverse sorted - std::stable_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::std_stable_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Name("sorting a std::vector<int> of size 10000 - reverse sorted - std::sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::std_sort });
+
+//////////////////////////////
+// std::vector<std::string> //
+//////////////////////////////
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - shuffled - alg::bubble_sort")
+    ->Args({ TestType::shuffled, SortFunc::bubble_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - shuffled - alg::insertion_sort")
+    ->Args({ TestType::shuffled, SortFunc::insertion_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - shuffled - alg::selection_sort")
+    ->Args({ TestType::shuffled, SortFunc::selection_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - shuffled - alg::heap_sort")
+    ->Args({ TestType::shuffled, SortFunc::heap_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - shuffled - alg::merge_sort")
+    ->Args({ TestType::shuffled, SortFunc::merge_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - shuffled - alg::quick_sort")
+    ->Args({ TestType::shuffled, SortFunc::quick_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - shuffled - std::stable_sort")
+    ->Args({ TestType::shuffled, SortFunc::std_stable_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - shuffled - std::sort")
+    ->Args({ TestType::shuffled, SortFunc::std_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - sorted - alg::bubble_sort")
+    ->Args({ TestType::sorted, SortFunc::bubble_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - sorted - alg::insertion_sort")
+    ->Args({ TestType::sorted, SortFunc::insertion_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - sorted - alg::selection_sort")
+    ->Args({ TestType::sorted, SortFunc::selection_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - sorted - alg::heap_sort")
+    ->Args({ TestType::sorted, SortFunc::heap_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - sorted - alg::merge_sort")
+    ->Args({ TestType::sorted, SortFunc::merge_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - sorted - alg::quick_sort")
+    ->Args({ TestType::sorted, SortFunc::quick_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - sorted - std::stable_sort")
+    ->Args({ TestType::sorted, SortFunc::std_stable_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - sorted - std::sort")
+    ->Args({ TestType::sorted, SortFunc::std_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - reverse sorted - alg::bubble_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::bubble_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - reverse sorted - alg::insertion_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::insertion_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - reverse sorted - alg::selection_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::selection_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - reverse sorted - alg::heap_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::heap_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - reverse sorted - alg::merge_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::merge_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - reverse sorted - alg::quick_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::quick_sort });
+
+BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
+    ->Name("sorting a std::vector<std::string> of size 10000 - reverse sorted - std::stable_sort")
     ->Args({ TestType::reverse_sorted, SortFunc::std_stable_sort });
 
 BENCHMARK_TEMPLATE1(bm_sort_vector, std::string)
-    ->Args({ TestType::random_shuffled, SortFunc::bubble_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::insertion_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::selection_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::heap_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::merge_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::quick_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::std_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::std_stable_sort })
+    ->Name("sorting a std::vector<std::string> of size 10000 - reverse sorted - std::sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::std_sort });
 
-    ->Args({ TestType::sorted, SortFunc::bubble_sort })
-    ->Args({ TestType::sorted, SortFunc::insertion_sort })
-    ->Args({ TestType::sorted, SortFunc::selection_sort })
-    ->Args({ TestType::sorted, SortFunc::heap_sort })
-    ->Args({ TestType::sorted, SortFunc::merge_sort })
-    ->Args({ TestType::sorted, SortFunc::quick_sort })
-    ->Args({ TestType::sorted, SortFunc::std_sort })
-    ->Args({ TestType::sorted, SortFunc::std_stable_sort })
+//////////////////////////////////
+// counting sort and radix sort //
+//////////////////////////////////
+BENCHMARK(bm_counting_sort_and_radix_sort)
+    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - shuffled - alg::counting_sort")
+    ->Args({ TestType::shuffled, SortFunc::counting_sort });
 
-    ->Args({ TestType::reverse_sorted, SortFunc::bubble_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::insertion_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::selection_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::heap_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::merge_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::quick_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::std_sort })
+BENCHMARK(bm_counting_sort_and_radix_sort)
+    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - shuffled - alg::radix_sort")
+    ->Args({ TestType::shuffled, SortFunc::radix_sort });
+
+BENCHMARK(bm_counting_sort_and_radix_sort)
+    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - shuffled - std::stable_sort")
+    ->Args({ TestType::shuffled, SortFunc::std_stable_sort });
+
+BENCHMARK(bm_counting_sort_and_radix_sort)
+    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - shuffled - std::sort")
+    ->Args({ TestType::shuffled, SortFunc::std_sort });
+
+BENCHMARK(bm_counting_sort_and_radix_sort)
+    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - sorted - alg::counting_sort")
+    ->Args({ TestType::sorted, SortFunc::counting_sort });
+
+BENCHMARK(bm_counting_sort_and_radix_sort)
+    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - sorted - alg::radix_sort")
+    ->Args({ TestType::sorted, SortFunc::radix_sort });
+
+BENCHMARK(bm_counting_sort_and_radix_sort)
+    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - sorted - std::stable_sort")
+    ->Args({ TestType::sorted, SortFunc::std_stable_sort });
+
+BENCHMARK(bm_counting_sort_and_radix_sort)
+    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - sorted - std::sort")
+    ->Args({ TestType::sorted, SortFunc::std_sort });
+
+BENCHMARK(bm_counting_sort_and_radix_sort)
+    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - alg::counting_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::counting_sort });
+
+BENCHMARK(bm_counting_sort_and_radix_sort)
+    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - alg::radix_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::radix_sort });
+
+BENCHMARK(bm_counting_sort_and_radix_sort)
+    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - std::stable_sort")
     ->Args({ TestType::reverse_sorted, SortFunc::std_stable_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Args({ TestType::random_shuffled, SortFunc::counting_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::radix_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::std_sort })
-    ->Args({ TestType::random_shuffled, SortFunc::std_stable_sort })
-
-    ->Args({ TestType::sorted, SortFunc::counting_sort })
-    ->Args({ TestType::sorted, SortFunc::radix_sort })
-    ->Args({ TestType::sorted, SortFunc::std_sort })
-    ->Args({ TestType::sorted, SortFunc::std_stable_sort })
-
-    ->Args({ TestType::reverse_sorted, SortFunc::counting_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::radix_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::std_sort })
-    ->Args({ TestType::reverse_sorted, SortFunc::std_stable_sort });
+    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - std::sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::std_sort });
 
 BENCHMARK_MAIN();
