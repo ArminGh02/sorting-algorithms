@@ -23,6 +23,15 @@ struct SortFunc { enum type {
     std_stable_sort,
 }; };
 
+struct TestType { enum type {
+    random_int,
+    sorted_int,
+    reverse_int,
+    random_str,
+    sorted_str,
+    reverse_str,
+}; };
+
 using FuncPtr = void (*)(std::vector<int>::iterator, std::vector<int>::iterator);
 
 static std::unordered_map<SortFunc::type, FuncPtr> func_map = {
@@ -47,52 +56,37 @@ static std::vector<Int> random_int_vector(std::size_t size, Int max = std::numer
     return vec;
 }
 
-template<typename Int>
-static std::vector<Int> sorted_int_vector(std::size_t size, Int max = std::numeric_limits<Int>::max()) {
-    auto vec = random_int_vector(size, max);
-    std::sort(vec.begin(), vec.end());
-    return vec;
+template<typename T>
+std::vector<T> get_random_vector(std::size_t size) = delete;
+
+template<>
+inline std::vector<int> get_random_vector<int>(std::size_t size) {
+    return random_int_vector<int>(size);
 }
 
-template<typename Int>
-static std::vector<Int> reverse_sorted_int_vector(std::size_t size, Int max = std::numeric_limits<Int>::max()) {
-    auto vec = random_int_vector(size, max);
-    std::sort(vec.rbegin(), vec.rend());
-    return vec;
-}
-
+template<typename T>
 static void bm_sort_vector(benchmark::State& state) {
-    static auto vec = random_int_vector<int>(10000);
-    for (auto _ : state) {
-        state.PauseTiming();
-        auto tmp = vec;
-        auto func_as_enum = static_cast<SortFunc::type>(state.range(0));
-        auto sort_func = func_map[func_as_enum];
-        state.ResumeTiming();
+    static auto vec = get_random_vector<T>(10000U);
 
-        sort_func(tmp.begin(), tmp.end());
+    auto test = static_cast<TestType::type>(state.range(0));
+    switch (test) {
+        case TestType::random_int:
+        case TestType::random_str:
+            break;
+        case TestType::sorted_int:
+        case TestType::sorted_str:
+            std::sort(vec.begin(), vec.end());
+            break;
+        case TestType::reverse_int:
+        case TestType::reverse_str:
+            std::sort(vec.rbegin(), vec.rend());
+            break;
     }
-}
 
-static void bm_sort_vector_sorted(benchmark::State& state) {
-    static auto vec = sorted_int_vector<int>(10000);
     for (auto _ : state) {
         state.PauseTiming();
         auto tmp = vec;
-        auto func_as_enum = static_cast<SortFunc::type>(state.range(0));
-        auto sort_func = func_map[func_as_enum];
-        state.ResumeTiming();
-
-        sort_func(tmp.begin(), tmp.end());
-    }
-}
-
-static void bm_sort_vector_reverse_sorted(benchmark::State& state) {
-    static auto vec = reverse_sorted_int_vector<int>(10000);
-    for (auto _ : state) {
-        state.PauseTiming();
-        auto tmp = vec;
-        auto func_as_enum = static_cast<SortFunc::type>(state.range(0));
+        auto func_as_enum = static_cast<SortFunc::type>(state.range(1));
         auto sort_func = func_map[func_as_enum];
         state.ResumeTiming();
 
@@ -103,10 +97,23 @@ static void bm_sort_vector_reverse_sorted(benchmark::State& state) {
 static void bm_counting_sort_and_radix_sort(benchmark::State& state) {
     constexpr auto MAX = 1000U;
     static auto vec = random_int_vector(10000, MAX);
+
+    auto test = static_cast<TestType::type>(state.range(0));
+    switch (test) {
+        case TestType::random_int:
+            break;
+        case TestType::sorted_int:
+            std::sort(vec.begin(), vec.end());
+            break;
+        case TestType::reverse_int:
+            std::sort(vec.rbegin(), vec.rend());
+            break;
+    }
+
     for (auto _ : state) {
         state.PauseTiming();
 
-        auto func = static_cast<SortFunc::type>(state.range(0));
+        auto func = static_cast<SortFunc::type>(state.range(1));
         auto tmp = vec;
 
         switch (func) {
@@ -130,112 +137,48 @@ static void bm_counting_sort_and_radix_sort(benchmark::State& state) {
     }
 }
 
-static void bm_counting_sort_and_radix_sort_sorted(benchmark::State& state) {
-    constexpr auto MAX = 1000U;
-    static auto vec = sorted_int_vector(10000, MAX);
-    for (auto _ : state) {
-        state.PauseTiming();
+BENCHMARK_TEMPLATE1(bm_sort_vector, int)
+    ->Args({ TestType::random_int, SortFunc::bubble_sort })
+    ->Args({ TestType::random_int, SortFunc::insertion_sort })
+    ->Args({ TestType::random_int, SortFunc::selection_sort })
+    ->Args({ TestType::random_int, SortFunc::heap_sort })
+    ->Args({ TestType::random_int, SortFunc::merge_sort })
+    ->Args({ TestType::random_int, SortFunc::quick_sort })
+    ->Args({ TestType::random_int, SortFunc::std_sort })
+    ->Args({ TestType::random_int, SortFunc::std_stable_sort })
 
-        auto func = static_cast<SortFunc::type>(state.range(0));
-        auto tmp = vec;
+    ->Args({ TestType::sorted_int, SortFunc::bubble_sort })
+    ->Args({ TestType::sorted_int, SortFunc::insertion_sort })
+    ->Args({ TestType::sorted_int, SortFunc::selection_sort })
+    ->Args({ TestType::sorted_int, SortFunc::heap_sort })
+    ->Args({ TestType::sorted_int, SortFunc::merge_sort })
+    ->Args({ TestType::sorted_int, SortFunc::quick_sort })
+    ->Args({ TestType::sorted_int, SortFunc::std_sort })
+    ->Args({ TestType::sorted_int, SortFunc::std_stable_sort })
 
-        switch (func) {
-        case SortFunc::counting_sort:
-            state.ResumeTiming();
-            alg::counting_sort(tmp.begin(), tmp.end(), MAX);
-            break;
-        case SortFunc::radix_sort:
-            state.ResumeTiming();
-            alg::radix_sort(tmp.begin(), tmp.end(), MAX);
-            break;
-        case SortFunc::std_sort:
-            state.ResumeTiming();
-            std::sort(tmp.begin(), tmp.end());
-            break;
-        case SortFunc::std_stable_sort:
-            state.ResumeTiming();
-            std::stable_sort(tmp.begin(), tmp.end());
-            break;
-        }
-    }
-}
-
-static void bm_counting_sort_and_radix_sort_reverse_sorted(benchmark::State& state) {
-    constexpr auto MAX = 1000U;
-    static auto vec = reverse_sorted_int_vector(10000, MAX);
-    for (auto _ : state) {
-        state.PauseTiming();
-
-        auto func = static_cast<SortFunc::type>(state.range(0));
-        auto tmp = vec;
-
-        switch (func) {
-        case SortFunc::counting_sort:
-            state.ResumeTiming();
-            alg::counting_sort(tmp.begin(), tmp.end(), MAX);
-            break;
-        case SortFunc::radix_sort:
-            state.ResumeTiming();
-            alg::radix_sort(tmp.begin(), tmp.end(), MAX);
-            break;
-        case SortFunc::std_sort:
-            state.ResumeTiming();
-            std::sort(tmp.begin(), tmp.end());
-            break;
-        case SortFunc::std_stable_sort:
-            state.ResumeTiming();
-            std::stable_sort(tmp.begin(), tmp.end());
-            break;
-        }
-    }
-}
-
-BENCHMARK(bm_sort_vector)
-    ->Arg(SortFunc::bubble_sort)
-    ->Arg(SortFunc::insertion_sort)
-    ->Arg(SortFunc::selection_sort)
-    ->Arg(SortFunc::heap_sort)
-    ->Arg(SortFunc::merge_sort)
-    ->Arg(SortFunc::quick_sort)
-    ->Arg(SortFunc::std_sort)
-    ->Arg(SortFunc::std_stable_sort);
-
-BENCHMARK(bm_sort_vector_sorted)
-    ->Arg(SortFunc::bubble_sort)
-    ->Arg(SortFunc::insertion_sort)
-    ->Arg(SortFunc::selection_sort)
-    ->Arg(SortFunc::heap_sort)
-    ->Arg(SortFunc::merge_sort)
-    ->Arg(SortFunc::quick_sort)
-    ->Arg(SortFunc::std_sort)
-    ->Arg(SortFunc::std_stable_sort);
-
-BENCHMARK(bm_sort_vector_reverse_sorted)
-    ->Arg(SortFunc::bubble_sort)
-    ->Arg(SortFunc::insertion_sort)
-    ->Arg(SortFunc::selection_sort)
-    ->Arg(SortFunc::heap_sort)
-    ->Arg(SortFunc::merge_sort)
-    ->Arg(SortFunc::quick_sort)
-    ->Arg(SortFunc::std_sort)
-    ->Arg(SortFunc::std_stable_sort);
+    ->Args({ TestType::reverse_int, SortFunc::bubble_sort })
+    ->Args({ TestType::reverse_int, SortFunc::insertion_sort })
+    ->Args({ TestType::reverse_int, SortFunc::selection_sort })
+    ->Args({ TestType::reverse_int, SortFunc::heap_sort })
+    ->Args({ TestType::reverse_int, SortFunc::merge_sort })
+    ->Args({ TestType::reverse_int, SortFunc::quick_sort })
+    ->Args({ TestType::reverse_int, SortFunc::std_sort })
+    ->Args({ TestType::reverse_int, SortFunc::std_stable_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Arg(SortFunc::counting_sort)
-    ->Arg(SortFunc::radix_sort)
-    ->Arg(SortFunc::std_sort)
-    ->Arg(SortFunc::std_stable_sort);
+    ->Args({ TestType::random_int, SortFunc::counting_sort })
+    ->Args({ TestType::random_int, SortFunc::radix_sort })
+    ->Args({ TestType::random_int, SortFunc::std_sort })
+    ->Args({ TestType::random_int, SortFunc::std_stable_sort })
 
-BENCHMARK(bm_counting_sort_and_radix_sort_sorted)
-    ->Arg(SortFunc::counting_sort)
-    ->Arg(SortFunc::radix_sort)
-    ->Arg(SortFunc::std_sort)
-    ->Arg(SortFunc::std_stable_sort);
+    ->Args({ TestType::sorted_int, SortFunc::counting_sort })
+    ->Args({ TestType::sorted_int, SortFunc::radix_sort })
+    ->Args({ TestType::sorted_int, SortFunc::std_sort })
+    ->Args({ TestType::sorted_int, SortFunc::std_stable_sort })
 
-BENCHMARK(bm_counting_sort_and_radix_sort_reverse_sorted)
-    ->Arg(SortFunc::counting_sort)
-    ->Arg(SortFunc::radix_sort)
-    ->Arg(SortFunc::std_sort)
-    ->Arg(SortFunc::std_stable_sort);
+    ->Args({ TestType::reverse_int, SortFunc::counting_sort })
+    ->Args({ TestType::reverse_int, SortFunc::radix_sort })
+    ->Args({ TestType::reverse_int, SortFunc::std_sort })
+    ->Args({ TestType::reverse_int, SortFunc::std_stable_sort });
 
 BENCHMARK_MAIN();
