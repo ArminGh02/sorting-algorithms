@@ -24,12 +24,9 @@ struct SortFunc { enum type {
 }; };
 
 struct TestType { enum type {
-    random_int,
-    sorted_int,
-    reverse_int,
-    random_str,
-    sorted_str,
-    reverse_str,
+    random_shuffled,
+    sorted,
+    reverse_sorted,
 }; };
 
 using FuncPtr = void (*)(std::vector<int>::iterator, std::vector<int>::iterator);
@@ -70,15 +67,12 @@ static void bm_sort_vector(benchmark::State& state) {
 
     auto test = static_cast<TestType::type>(state.range(0));
     switch (test) {
-        case TestType::random_int:
-        case TestType::random_str:
+        case TestType::random_shuffled:
             break;
-        case TestType::sorted_int:
-        case TestType::sorted_str:
+        case TestType::sorted:
             std::sort(vec.begin(), vec.end());
             break;
-        case TestType::reverse_int:
-        case TestType::reverse_str:
+        case TestType::reverse_sorted:
             std::sort(vec.rbegin(), vec.rend());
             break;
     }
@@ -100,12 +94,12 @@ static void bm_counting_sort_and_radix_sort(benchmark::State& state) {
 
     auto test = static_cast<TestType::type>(state.range(0));
     switch (test) {
-        case TestType::random_int:
+        case TestType::random_shuffled:
             break;
-        case TestType::sorted_int:
+        case TestType::sorted:
             std::sort(vec.begin(), vec.end());
             break;
-        case TestType::reverse_int:
+        case TestType::reverse_sorted:
             std::sort(vec.rbegin(), vec.rend());
             break;
     }
@@ -138,47 +132,47 @@ static void bm_counting_sort_and_radix_sort(benchmark::State& state) {
 }
 
 BENCHMARK_TEMPLATE1(bm_sort_vector, int)
-    ->Args({ TestType::random_int, SortFunc::bubble_sort })
-    ->Args({ TestType::random_int, SortFunc::insertion_sort })
-    ->Args({ TestType::random_int, SortFunc::selection_sort })
-    ->Args({ TestType::random_int, SortFunc::heap_sort })
-    ->Args({ TestType::random_int, SortFunc::merge_sort })
-    ->Args({ TestType::random_int, SortFunc::quick_sort })
-    ->Args({ TestType::random_int, SortFunc::std_sort })
-    ->Args({ TestType::random_int, SortFunc::std_stable_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::bubble_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::insertion_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::selection_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::heap_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::merge_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::quick_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::std_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::std_stable_sort })
 
-    ->Args({ TestType::sorted_int, SortFunc::bubble_sort })
-    ->Args({ TestType::sorted_int, SortFunc::insertion_sort })
-    ->Args({ TestType::sorted_int, SortFunc::selection_sort })
-    ->Args({ TestType::sorted_int, SortFunc::heap_sort })
-    ->Args({ TestType::sorted_int, SortFunc::merge_sort })
-    ->Args({ TestType::sorted_int, SortFunc::quick_sort })
-    ->Args({ TestType::sorted_int, SortFunc::std_sort })
-    ->Args({ TestType::sorted_int, SortFunc::std_stable_sort })
+    ->Args({ TestType::sorted, SortFunc::bubble_sort })
+    ->Args({ TestType::sorted, SortFunc::insertion_sort })
+    ->Args({ TestType::sorted, SortFunc::selection_sort })
+    ->Args({ TestType::sorted, SortFunc::heap_sort })
+    ->Args({ TestType::sorted, SortFunc::merge_sort })
+    ->Args({ TestType::sorted, SortFunc::quick_sort })
+    ->Args({ TestType::sorted, SortFunc::std_sort })
+    ->Args({ TestType::sorted, SortFunc::std_stable_sort })
 
-    ->Args({ TestType::reverse_int, SortFunc::bubble_sort })
-    ->Args({ TestType::reverse_int, SortFunc::insertion_sort })
-    ->Args({ TestType::reverse_int, SortFunc::selection_sort })
-    ->Args({ TestType::reverse_int, SortFunc::heap_sort })
-    ->Args({ TestType::reverse_int, SortFunc::merge_sort })
-    ->Args({ TestType::reverse_int, SortFunc::quick_sort })
-    ->Args({ TestType::reverse_int, SortFunc::std_sort })
-    ->Args({ TestType::reverse_int, SortFunc::std_stable_sort });
+    ->Args({ TestType::reverse_sorted, SortFunc::bubble_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::insertion_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::selection_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::heap_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::merge_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::quick_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::std_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::std_stable_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Args({ TestType::random_int, SortFunc::counting_sort })
-    ->Args({ TestType::random_int, SortFunc::radix_sort })
-    ->Args({ TestType::random_int, SortFunc::std_sort })
-    ->Args({ TestType::random_int, SortFunc::std_stable_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::counting_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::radix_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::std_sort })
+    ->Args({ TestType::random_shuffled, SortFunc::std_stable_sort })
 
-    ->Args({ TestType::sorted_int, SortFunc::counting_sort })
-    ->Args({ TestType::sorted_int, SortFunc::radix_sort })
-    ->Args({ TestType::sorted_int, SortFunc::std_sort })
-    ->Args({ TestType::sorted_int, SortFunc::std_stable_sort })
+    ->Args({ TestType::sorted, SortFunc::counting_sort })
+    ->Args({ TestType::sorted, SortFunc::radix_sort })
+    ->Args({ TestType::sorted, SortFunc::std_sort })
+    ->Args({ TestType::sorted, SortFunc::std_stable_sort })
 
-    ->Args({ TestType::reverse_int, SortFunc::counting_sort })
-    ->Args({ TestType::reverse_int, SortFunc::radix_sort })
-    ->Args({ TestType::reverse_int, SortFunc::std_sort })
-    ->Args({ TestType::reverse_int, SortFunc::std_stable_sort });
+    ->Args({ TestType::reverse_sorted, SortFunc::counting_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::radix_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::std_sort })
+    ->Args({ TestType::reverse_sorted, SortFunc::std_stable_sort });
 
 BENCHMARK_MAIN();
