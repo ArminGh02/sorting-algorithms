@@ -130,6 +130,36 @@ static void bm_counting_sort_and_radix_sort(benchmark::State& state) {
     }
 }
 
+static void bm_counting_sort_and_radix_sort_sorted(benchmark::State& state) {
+    constexpr auto MAX = 1000U;
+    static auto vec = sorted_random_int_vector(10000, MAX);
+    for (auto _ : state) {
+        state.PauseTiming();
+
+        auto func = static_cast<SortFunc::type>(state.range(0));
+        auto tmp = vec;
+
+        switch (func) {
+        case SortFunc::counting_sort:
+            state.ResumeTiming();
+            alg::counting_sort(tmp.begin(), tmp.end(), MAX);
+            break;
+        case SortFunc::radix_sort:
+            state.ResumeTiming();
+            alg::radix_sort(tmp.begin(), tmp.end(), MAX);
+            break;
+        case SortFunc::std_sort:
+            state.ResumeTiming();
+            std::sort(tmp.begin(), tmp.end());
+            break;
+        case SortFunc::std_stable_sort:
+            state.ResumeTiming();
+            std::stable_sort(tmp.begin(), tmp.end());
+            break;
+        }
+    }
+}
+
 BENCHMARK(bm_sort_random_vector)
     ->Arg(SortFunc::bubble_sort)
     ->Arg(SortFunc::insertion_sort)
@@ -161,6 +191,12 @@ BENCHMARK(bm_sort_reverse_sorted_vector)
     ->Arg(SortFunc::std_stable_sort);
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
+    ->Arg(SortFunc::counting_sort)
+    ->Arg(SortFunc::radix_sort)
+    ->Arg(SortFunc::std_sort)
+    ->Arg(SortFunc::std_stable_sort);
+
+BENCHMARK(bm_counting_sort_and_radix_sort_sorted)
     ->Arg(SortFunc::counting_sort)
     ->Arg(SortFunc::radix_sort)
     ->Arg(SortFunc::std_sort)
