@@ -61,7 +61,7 @@ static std::vector<Int> reverse_sorted_random_int_vector(std::size_t size, Int m
     return vec;
 }
 
-static void bm_sort_random_vector(benchmark::State& state) {
+static void bm_sort_vector(benchmark::State& state) {
     static auto vec = random_int_vector<int>(10000);
     for (auto _ : state) {
         state.PauseTiming();
@@ -74,7 +74,7 @@ static void bm_sort_random_vector(benchmark::State& state) {
     }
 }
 
-static void bm_sort_sorted_vector(benchmark::State& state) {
+static void bm_sort_vector_sorted(benchmark::State& state) {
     static auto vec = sorted_random_int_vector<int>(10000);
     for (auto _ : state) {
         state.PauseTiming();
@@ -87,7 +87,7 @@ static void bm_sort_sorted_vector(benchmark::State& state) {
     }
 }
 
-static void bm_sort_reverse_sorted_vector(benchmark::State& state) {
+static void bm_sort_vector_reverse_sorted(benchmark::State& state) {
     static auto vec = reverse_sorted_random_int_vector<int>(10000);
     for (auto _ : state) {
         state.PauseTiming();
@@ -160,7 +160,7 @@ static void bm_counting_sort_and_radix_sort_sorted(benchmark::State& state) {
     }
 }
 
-BENCHMARK(bm_sort_random_vector)
+BENCHMARK(bm_sort_vector)
     ->Arg(SortFunc::bubble_sort)
     ->Arg(SortFunc::insertion_sort)
     ->Arg(SortFunc::selection_sort)
@@ -170,7 +170,7 @@ BENCHMARK(bm_sort_random_vector)
     ->Arg(SortFunc::std_sort)
     ->Arg(SortFunc::std_stable_sort);
 
-BENCHMARK(bm_sort_sorted_vector)
+BENCHMARK(bm_sort_vector_sorted)
     ->Arg(SortFunc::bubble_sort)
     ->Arg(SortFunc::insertion_sort)
     ->Arg(SortFunc::selection_sort)
@@ -180,7 +180,7 @@ BENCHMARK(bm_sort_sorted_vector)
     ->Arg(SortFunc::std_sort)
     ->Arg(SortFunc::std_stable_sort);
 
-BENCHMARK(bm_sort_reverse_sorted_vector)
+BENCHMARK(bm_sort_vector_reverse_sorted)
     ->Arg(SortFunc::bubble_sort)
     ->Arg(SortFunc::insertion_sort)
     ->Arg(SortFunc::selection_sort)
