@@ -222,7 +222,7 @@ BENCHMARK_TEMPLATE1(bm_sort_vector, int)
     ->Args({ TestType::sorted, SortFunc::merge_sort });
 
 BENCHMARK_TEMPLATE1(bm_sort_vector, int)
-    ->Name("sorting a std::vector<int> of size 10000 - sorted - quick_sort")
+    ->Name("sorting a std::vector<int> of size 10000 - sorted - alg::quick_sort")
     ->Args({ TestType::sorted, SortFunc::quick_sort });
 
 BENCHMARK_TEMPLATE1(bm_sort_vector, int)
