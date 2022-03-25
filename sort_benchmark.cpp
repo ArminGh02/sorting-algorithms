@@ -50,6 +50,7 @@ static std::vector<Int> random_int_vector(std::size_t size, Int max = std::numer
     std::uniform_int_distribution<Int> dist(std::numeric_limits<Int>::min(), max);
 
     std::vector<Int> vec(size);
+
     std::generate(vec.begin(), vec.end(), [&dist]() {
         return dist(gen);
     });
@@ -75,6 +76,19 @@ static std::string random_string(std::size_t min_len, std::size_t max_len) {
     });
 
     return str;
+}
+
+static std::vector<double> random_double_vector(std::size_t size, double min, double max) {
+    static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+    std::uniform_real_distribution<> dist(min, max);
+
+    std::vector<double> vec(size);
+
+    std::generate(vec.begin(), vec.end(), [&dist]() {
+        return dist(gen);
+    });
+
+    return vec;
 }
 
 template<class T>
@@ -161,6 +175,44 @@ static void bm_counting_sort_and_radix_sort(benchmark::State& state) {
         case SortFunc::std_stable_sort:
             state.ResumeTiming();
             std::stable_sort(tmp.begin(), tmp.end());
+            break;
+        }
+    }
+}
+
+static void bm_bucket_sort(benchmark::State& state) {
+    static auto vec = random_double_vector(10000U, 0.0, 1.0);
+
+    auto test = static_cast<TestType::type>(state.range(0));
+    switch (test) {
+    case TestType::shuffled:
+        break;
+    case TestType::sorted:
+        std::sort(vec.begin(), vec.end());
+        break;
+    case TestType::reverse_sorted:
+        std::sort(vec.rbegin(), vec.rend());
+        break;
+    }
+
+    for (auto _ : state) {
+        state.PauseTiming();
+
+        auto func = static_cast<SortFunc::type>(state.range(1));
+        auto tmp = vec;
+
+        switch (func) {
+        case SortFunc::bucket_sort:
+            state.ResumeTiming();
+            alg::bucket_sort(tmp.begin(), tmp.end());
+            break;
+        case SortFunc::std_stable_sort:
+            state.ResumeTiming();
+            std::stable_sort(tmp.begin(), tmp.end());
+            break;
+        case SortFunc::std_sort:
+            state.ResumeTiming();
+            std::sort(tmp.begin(), tmp.end());
             break;
         }
     }
@@ -413,6 +465,45 @@ BENCHMARK(bm_counting_sort_and_radix_sort)
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
     ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - std::sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::std_sort });
+
+/////////////////
+// bucket sort //
+/////////////////
+BENCHMARK(bm_bucket_sort)
+    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - shuffled - alg::bucket_sort")
+    ->Args({ TestType::shuffled, SortFunc::bucket_sort });
+
+BENCHMARK(bm_bucket_sort)
+    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - shuffled - std::stable_sort")
+    ->Args({ TestType::shuffled, SortFunc::std_stable_sort });
+
+BENCHMARK(bm_bucket_sort)
+    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - shuffled - std::sort")
+    ->Args({ TestType::shuffled, SortFunc::std_sort });
+
+BENCHMARK(bm_bucket_sort)
+    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - sorted - alg::bucket_sort")
+    ->Args({ TestType::sorted, SortFunc::bucket_sort });
+
+BENCHMARK(bm_bucket_sort)
+    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - sorted - std::stable_sort")
+    ->Args({ TestType::sorted, SortFunc::std_stable_sort });
+
+BENCHMARK(bm_bucket_sort)
+    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - sorted - std::sort")
+    ->Args({ TestType::sorted, SortFunc::std_sort });
+
+BENCHMARK(bm_bucket_sort)
+    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - reverse sorted - alg::bucket_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::bucket_sort });
+
+BENCHMARK(bm_bucket_sort)
+    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - reverse sorted - std::stable_sort")
+    ->Args({ TestType::reverse_sorted, SortFunc::std_stable_sort });
+
+BENCHMARK(bm_bucket_sort)
+    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - reverse sorted - std::sort")
     ->Args({ TestType::reverse_sorted, SortFunc::std_sort });
 
 BENCHMARK_MAIN();
