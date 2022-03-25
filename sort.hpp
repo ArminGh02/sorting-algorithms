@@ -1,18 +1,18 @@
 /*
  * author: Armin Gh (arminghorbanian02@gmail.com)
  *
- * This file implements following sorting algorithms:
+ * This file implements the following sorting algorithms:
  *    bubble_sort       stable      in-place
  *    insertion_sort    stable      in-place
  *    selection_sort    unstable    in-place
  *    merge_sort        stable      not-in-place
- *    quick_sort        unstable    in-place        This is actually an introsort variant of quick sort
+ *    quick_sort        unstable    in-place        (the introsort variant)
  *    heap_sort         unstable    in-place
  *    counting_sort     stable      not-in-place
  *    radix_sort        stable      not-in-place
  *    bucket_sort       stable      not-in-place
  *
- * And following sorting-related algorithms:
+ * And the following sorting-related algorithms:
  *    merge
  *    partition
  *    quick_select
@@ -38,9 +38,9 @@ namespace alg {
 /**
  * @brief bubble sort algorithm
  *
- * @details This stable in-place O(n^2) algorithm is only useful
- * for small ranges containing less than 10 items.
- * You would be better off using alg::insertion_sort.
+ * @details This stable in-place O(n^2) algorithm is mostly useful
+ * for small ranges containing less than 10 elements.
+ * Usually you would be better off using alg::insertion_sort.
  *
  * @param first a bidirectional iterator
  * @param last a bidirectional iterator
@@ -79,8 +79,8 @@ inline void bubble_sort(BidirectionalIterator first, BidirectionalIterator last)
  * @brief insertion sort algorithm
  *
  * @details This is a stable in-place O(n^2) algorithm.
- * We use this function in alg::merge_sort and alg::quick_sort
- * when the range gets smaller than 16 elements
+ * It is also used in alg::merge_sort and alg::quick_sort
+ * when the range gets smaller than 16 elements.
  *
  * @param first a bidirectional iterator
  * @param last a bidirectional iterator
@@ -126,8 +126,8 @@ inline void insertion_sort(
 /**
  * @brief selection sort algorithm
  *
- * @details This unstable in-place O(n^2) algorithm,
- * is generally faster than bubble sort but slower than insertion sort.
+ * @details This unstable in-place O(n^2) algorithm is
+ * generally faster than bubble sort but slower than insertion sort.
  * The good thing about selection sort is it never makes more than O(n)
  * swaps and can be useful when memory write is a costly operation.
  *
@@ -171,10 +171,9 @@ inline void selection_sort(
 /**
  * @brief heapify down algorithm (iterative)
  *
- * @details This in-place O(log(n)) algorithm compares i-th element,
- * at binary heap with its children and swaps if a child is larger
- * and repeats this for the child until the child become larger than
- * its children.
+ * @details This in-place O(log(n)) algorithm compares the i-th element
+ * in a binary heap with its children and swaps if a child is larger.
+ * This is repeated for the child until it becomes larger than its children.
  *
  * @param first a random access iterator
  * @param last a random access iterator
@@ -223,9 +222,9 @@ inline void heapify_down(
 /**
  * @brief make heap algorithm
  *
- * @details This in-place O(n) algorithm makes a heap from the specified range.
- * It starts from the last non-leaf node which is at (n/2 - 1) index
- * and heapifies down each node until it reaches the root
+ * @details This in-place O(n) algorithm turns the specified range into a binary heap.
+ * It starts from the last non-leaf node (which is at index (n/2 - 1))
+ * and heapifies down each node until it reaches the root.
  *
  * @param first a random access iterator
  * @param last a random access iterator
@@ -252,13 +251,11 @@ inline void make_heap(RandomAccessIterator first, RandomAccessIterator last) noe
 /**
  * @brief heap sort algorithm
  *
- * @details This unstable in-place O(n*log(n)) algorithm,
- * first calls alg::make_heap on the range to build a max heap,
- * Then like selection sort,
- * heap sort divides its input into a sorted and an unsorted region,
- * and it iteratively shrinks the unsorted region
- * by extracting the largest element from it
- * and inserting it into the sorted region.
+ * @details This unstable in-place O(n*log(n)) algorithm first calls
+ * alg::make_heap on the range to build a max heap. Next it divides its
+ * input into a sorted and an unsorted region (like in selection sort),
+ * and then iteratively shrinks the unsorted region by extracting
+ * the largest element and inserting it into the sorted region.
  *
  * @param first a random access iterator
  * @param last a random access iterator
@@ -292,16 +289,14 @@ inline void heap_sort(
 /**
  * @brief merge two sorted ranges algorithm
  *
- * @details Merges the ranges @p [first1,last1) and @p [first2,last2) into
+ * @details Merges the sorted ranges @p [first1,last1) and @p [first2,last2) into
  * the sorted range @p [result,result+(last1-first1)+(last2-first2)).
- * Both input ranges must be sorted, and the
- * output range must not overlap with either of the input ranges.
- * The sort is stable, that is, for equivalent elements in the
- * two ranges, elements from the first range will always come
- * before elements from the second.
+ * The output range must not overlap with either of the input ranges.
+ * The merge is stable, that is, for equivalent elements in the two ranges,
+ * elements from the first range will always come before the second.
  *
- * @note a call to this function causes the @p [first1,last1) and @p [first2,last2)
- * to contain elements witch are on an unspecified state due to move.
+ * @note A call to this function causes the ranges @p [first1,last1) and @p [first2,last2)
+ * to contain elements which are in an unspecified state due to being moved.
  *
  * @param first1 an input iterator
  * @param last1 an input iterator
@@ -309,7 +304,7 @@ inline void heap_sort(
  * @param last2 an input iterator
  * @param result an output iterator
  * @param compare a comparison functor
- * @return an output iterator to element past the last element copied.
+ * @return an output iterator to the element following the last moved element.
  */
 template<
     class InputIterator1,
@@ -482,7 +477,7 @@ inline void merge_sort_buf(
  *
  * @details This is a stable not-in-place O(n*log(n)) divide and conquer algorithm.
  *
- * @note It actually switches to insertion sort when the range gets smaller than 16 elements.
+ * @note Switches to insertion sort when the range gets smaller than 16 elements.
  *
  * @param first a random access iterator
  * @param last a random access iterator
@@ -646,14 +641,14 @@ constexpr uint8_t operator"" _u8(uint64_t val) noexcept {
 /**
  * @brief quick select algorithm
  *
- * @details it divides the range to the groups of 5 elements,
- * sorts each group, and find its median. Then recursively calls itself for
- * the medians of groups to find the median of this medians.
- * Then it will pick median of medians as the pivot and partitions the range.
+ * @details It divides the range into groups of 5 elements,
+ * sorts each group, and find their median. Then recursively calls itself for
+ * the medians of the groups to find the median of those medians.
+ * It will then pick the median of medians as the pivot and partitions the range.
  *
  * @param first a random access iterator
- * @param kth a random access iterator that after the call to
- * function will point to the element which is the k-th element in the sorted array
+ * @param kth a random access iterator which will point to the k-th element
+ *            of the sorted array after the function is called.
  * @param last a random access iterator
  * @param compare a comparison functor
  */
@@ -776,15 +771,15 @@ inline void quick_sort_impl(
 /**
  * @brief quick sort algorithm
  *
- * @details It actually uses introsort if the iterator is a random access iterator.
- * Introsort uses insertion sort if the range gets small, else if the recursion count
- * become more than 2*log2(n) it calls heapsort, else it uses plain quick sort.
- * We use random pivot for the partitioning if the iterator is a random access iterator.
- * And we pick last element as pivot if the iterator is a bidirectional iterator.
+ * @details Uses introsort if the iterator is a random access iterator.
+ * Introsort uses insertion sort once the range gets small, and if the recursion depth
+ * becomes more than 2*log2(n) it uses heapsort.
+ * A random pivot is used for the partitioning if the iterator is a random access iterator.
+ * The last element is used as pivot if the iterator is a bidirectional iterator.
  *
  * @param first a bidirectional iterator
  * @param last a bidirectional iterator
- * @param compare a comparison functori
+ * @param compare a comparison functor
  */
 template<class BidirectionalIterator, class Compare>
 inline void quick_sort(
@@ -808,8 +803,8 @@ inline void quick_sort(
 /**
  * @brief counting sort algorithm
  *
- * @details This stable not-in-place algorithm,
- * is of O(n+max) where max is the max value in the range.
+ * @details This stable not-in-place algorithm is
+ * of O(n+max) where max is the max value in the range.
  * It works great when the max value is relatively small and there are repeated values.
  *
  * @param first a bidirectional iterator to integer sequence
@@ -899,8 +894,8 @@ inline void counting_sort_digit(
 /**
  * @brief radix sort algorithm
  *
- * @details simply for i from 0 to number of digits of max value,
- * calls counting sort to sort digits at i-th place from the right side of integers.
+ * @details For i from 0 to max value's digits,
+ * calls counting sort to sort digits at the i-th place from the right side of the integers.
  *
  * @param first a bidirectional iterator to an integer range
  * @param last a bidirectional iterator to an integer range
@@ -979,7 +974,7 @@ inline void bucket_sort_impl(
 ) {
     std::vector<std::forward_list<Float>> buckets(n);
 
-    // we traverse in reverse order so that the algorithm remain stable
+    // we traverse in reverse order so that the algorithm remains stable
     // https://stackoverflow.com/a/3611799/15143062
     for (auto it = last; it-- != first;) {
         buckets[std::floor(*it * n)].push_front(*it);
@@ -1000,7 +995,7 @@ inline void bucket_sort_impl(
 /**
  * @brief bucket sort algorithm
  *
- * requires the values of the range to be floating-point and in [0, 1)
+ * @note Requires the given values to be floating-point numbers in the range [0, 1)
  *
  * @param first a forward iterator to a floating-point range
  * @param last a forward iterator to a floating-point range
