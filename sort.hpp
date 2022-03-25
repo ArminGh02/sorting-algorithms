@@ -1,24 +1,24 @@
-//
-// author: Armin Gh (arminghorbanian02@gmail.com)
-//
-// This file implements following sorting algorithms:
-//    bubble_sort       stable      in-place
-//    insertion_sort    stable      in-place
-//    selection_sort    unstable    in-place
-//    merge_sort        stable      not-in-place
-//    quick_sort        unstable    in-place        This is actually an introsort variant of quick sort
-//    heap_sort         unstable    in-place
-//    counting_sort     stable      not-in-place
-//    radix_sort        stable      not-in-place
-//    bucket_sort       stable      not-in-place
-//
-// And following sorting-related algorithms:
-//    merge
-//    partition
-//    quick_select
-//    heapify_down
-//    make_heap
-//
+/*
+ * author: Armin Gh (arminghorbanian02@gmail.com)
+ *
+ * This file implements following sorting algorithms:
+ *    bubble_sort       stable      in-place
+ *    insertion_sort    stable      in-place
+ *    selection_sort    unstable    in-place
+ *    merge_sort        stable      not-in-place
+ *    quick_sort        unstable    in-place        This is actually an introsort variant of quick sort
+ *    heap_sort         unstable    in-place
+ *    counting_sort     stable      not-in-place
+ *    radix_sort        stable      not-in-place
+ *    bucket_sort       stable      not-in-place
+ *
+ * And following sorting-related algorithms:
+ *    merge
+ *    partition
+ *    quick_select
+ *    heapify_down
+ *    make_heap
+ */
 
 #ifndef SORT_HPP
 #define SORT_HPP
@@ -35,6 +35,17 @@
 
 namespace alg {
 
+/**
+ * @brief bubble sort algorithm
+ *
+ * @details This stable in-place O(n^2) algorithm is only useful
+ * for small ranges containing less than 10 items.
+ * You would be better off using alg::insertion_sort.
+ *
+ * @param first a bidirectional iterator
+ * @param last a bidirectional iterator
+ * @param compare a comparison functor
+ */
 template<class BidirectionalIterator, class Compare>
 inline void bubble_sort(
     BidirectionalIterator first,
@@ -64,6 +75,17 @@ inline void bubble_sort(BidirectionalIterator first, BidirectionalIterator last)
     bubble_sort(first, last, std::less<value_type>());
 }
 
+/**
+ * @brief insertion sort algorithm
+ *
+ * @details This is a stable in-place O(n^2) algorithm.
+ * We use this function in alg::merge_sort and alg::quick_sort
+ * when the range gets smaller than 16 elements
+ *
+ * @param first a bidirectional iterator
+ * @param last a bidirectional iterator
+ * @param compare a comparison functor
+ */
 template<
     class BidirectionalIterator,
     class Compare,
@@ -101,6 +123,18 @@ inline void insertion_sort(
     insertion_sort(first, last, std::less<T>());
 }
 
+/**
+ * @brief selection sort algorithm
+ *
+ * @details This unstable in-place O(n^2) algorithm,
+ * is generally faster than bubble sort but slower than insertion sort.
+ * The good thing about selection sort is it never makes more than O(n)
+ * swaps and can be useful when memory write is a costly operation.
+ *
+ * @param first a bidirectional iterator
+ * @param last a bidirectional iterator
+ * @param compare a comparison functor
+ */
 template<class BidirectionalIterator, class Compare>
 inline void selection_sort(
     BidirectionalIterator first,
@@ -134,6 +168,19 @@ inline void selection_sort(
     selection_sort(first, last, std::less<value_type>());
 }
 
+/**
+ * @brief heapify down algorithm (iterative)
+ *
+ * @details This in-place O(log(n)) algorithm compares i-th element,
+ * at binary heap with its children and swaps if a child is larger
+ * and repeats this for the child until the child become larger than
+ * its children.
+ *
+ * @param first a random access iterator
+ * @param last a random access iterator
+ * @param i the index at which we start to heapify
+ * @param compare a comparison functor
+ */
 template<class RandomAccessIterator, class Compare>
 inline void heapify_down(
     RandomAccessIterator first,
@@ -173,6 +220,17 @@ inline void heapify_down(
     heapify_down(first, last, i, std::less<value_type>());
 }
 
+/**
+ * @brief make heap algorithm
+ *
+ * @details This in-place O(n) algorithm makes a heap from the specified range.
+ * It starts from the last non-leaf node which is at (n/2 - 1) index
+ * and heapifies down each node until it reaches the root
+ *
+ * @param first a random access iterator
+ * @param last a random access iterator
+ * @param compare a comparison functor
+ */
 template<class RandomAccessIterator, class Compare>
 inline void make_heap(
     RandomAccessIterator first,
@@ -191,6 +249,21 @@ inline void make_heap(RandomAccessIterator first, RandomAccessIterator last) noe
     make_heap(first, last, std::less<value_type>());
 }
 
+/**
+ * @brief heap sort algorithm
+ *
+ * @details This unstable in-place O(n*log(n)) algorithm,
+ * first calls alg::make_heap on the range to build a max heap,
+ * Then like selection sort,
+ * heap sort divides its input into a sorted and an unsorted region,
+ * and it iteratively shrinks the unsorted region
+ * by extracting the largest element from it
+ * and inserting it into the sorted region.
+ *
+ * @param first a random access iterator
+ * @param last a random access iterator
+ * @param compare a comparison functor
+ */
 template<class RandomAccessIterator, class Compare>
 inline void heap_sort(
     RandomAccessIterator first,
@@ -216,6 +289,25 @@ inline void heap_sort(
     heap_sort(first, last, std::less<value_type>());
 }
 
+/**
+ * @brief merge two sorted ranges algorithm
+ *
+ * @details Merges the ranges @p [first1,last1) and @p [first2,last2) into
+ * the sorted range @p [result, result + (last1-first1) + (last2-first2)).
+ * Both input ranges must be sorted, and the
+ * output range must not overlap with either of the input ranges.
+ * The sort is stable, that is, for equivalent elements in the
+ * two ranges, elements from the first range will always come
+ * before elements from the second.
+ *
+ * @param first1 an input iterator
+ * @param last1 an input iterator
+ * @param first2 an input iterator
+ * @param last2 an input iterator
+ * @param result an output iterator
+ * @param compare a comparison functor
+ * @return an output iterator to element past the last element copied.
+ */
 template<
     class InputIterator,
     class OutputIterator,
@@ -230,6 +322,7 @@ inline OutputIterator merge(
     OutputIterator result,
     Compare compare
 ) noexcept(std::is_nothrow_move_assignable<T>::value) {
+    std::merge()
     while (first1 != last1 && first2 != last2) {
         if (compare(*first1, *first2)) {
             *result = std::move(*first1);
@@ -290,8 +383,8 @@ public:
 
 private:
     enum class ResultLocation : bool {
-        src,
-        buf,
+        src,  // indicates that the result is in the source range
+        buf,  // indicates that the result is in the buffer
     };
 
     static ResultLocation sort_impl(
@@ -380,6 +473,18 @@ inline void merge_sort_buf(
     merge_sort_buf(first, last, buffer, std::less<T>());
 }
 
+/**
+ * @brief merge sort algorithm
+ *
+ * @details This is a stable not-in-place O(n*log(n)) divide and conquer algorithm.
+ *
+ * @note It actually switches to insertion sort when the range gets smaller than 16 elements.
+ *
+ * @param first a random access iterator
+ * @param last a random access iterator
+ * @param allocator an allocator object
+ * @param compare a comparison functor
+ */
 template<
     class RandomAccessIterator,
     class Allocator,
@@ -534,6 +639,20 @@ constexpr uint8_t operator"" _u8(uint64_t val) noexcept {
 
 }  // namespace literals
 
+/**
+ * @brief quick select algorithm
+ *
+ * @details it divides the range to the groups of 5 elements,
+ * sorts each group, and find its median. Then recursively calls itself for
+ * the medians of groups to find the median of this medians.
+ * Then it will pick median of medians as the pivot and partitions the range.
+ *
+ * @param first a random access iterator
+ * @param kth a random access iterator that after the call to
+ * function will point to the element which is the k-th element in the sorted array
+ * @param last a random access iterator
+ * @param compare a comparison functor
+ */
 template<class RandomAccessIterator, class Compare>
 inline void quick_select(
     RandomAccessIterator first,
@@ -608,11 +727,11 @@ inline void quick_sort_impl_helper(
     int recursion_count,
     Compare compare
 ) {
-    if (last - first <= 16) {
+    if (last - first <= 16) { // small
         insertion_sort(first, last, compare);
         return;
     }
-    if (recursion_count <= 0) {
+    if (recursion_count <= 0) { // too many divisions
         heap_sort(first, last, compare);
         return;
     }
@@ -650,6 +769,19 @@ inline void quick_sort_impl(
 
 }  // namespace detail
 
+/**
+ * @brief quick sort algorithm
+ *
+ * @details It actually uses introsort if the iterator is a random access iterator.
+ * Introsort uses insertion sort if the range gets small, else if the recursion count
+ * become more than 2*log2(n) it calls heapsort, else it uses plain quick sort.
+ * We use random pivot for the partitioning if the iterator is a random access iterator.
+ * And we pick last element as pivot if the iterator is a bidirectional iterator.
+ *
+ * @param first a bidirectional iterator
+ * @param last a bidirectional iterator
+ * @param compare a comparison functori
+ */
 template<class BidirectionalIterator, class Compare>
 inline void quick_sort(
     BidirectionalIterator first,
@@ -669,6 +801,18 @@ inline void quick_sort(
     quick_sort(first, last, std::less<value_type>());
 }
 
+/**
+ * @brief counting sort algorithm
+ *
+ * @details This stable not-in-place algorithm,
+ * is of O(n+max) where max is the max value in the range.
+ * It works great when the max value is relatively small and there are repeated values.
+ *
+ * @param first a bidirectional iterator to integer sequence
+ * @param last a bidirectional iterator to integer sequence
+ * @param max the max integer value in the range
+ * @param n the size of the range
+ */
 template<
     class BidirectionalIterator,
     class Int = typename BidirectionalIterator::value_type,
@@ -713,6 +857,9 @@ inline void counting_sort(
 
 namespace detail {
 
+/**
+ * @brief helper function for alg::radix_sort that implements counting sort
+ */
 template<
     class BidirectionalIterator,
     class Int = typename BidirectionalIterator::value_type,
@@ -745,6 +892,17 @@ inline void counting_sort_digit(
 
 }
 
+/**
+ * @brief radix sort algorithm
+ *
+ * @details simply for i from 0 to number of digits of max value,
+ * calls counting sort to sort digits at i-th place from the right side of integers.
+ *
+ * @param first a bidirectional iterator to an integer range
+ * @param last a bidirectional iterator to an integer range
+ * @param max the max value in the range
+ * @param n the size of the range
+ */
 template<
     class BidirectionalIterator,
     class Int = typename BidirectionalIterator::value_type,
@@ -835,6 +993,15 @@ inline void bucket_sort_impl(
 
 }
 
+/**
+ * @brief bucket sort algorithm
+ *
+ * requires the values of the range to be floating-point and in [0, 1)
+ *
+ * @param first a forward iterator to a floating-point range
+ * @param last a forward iterator to a floating-point range
+ * @param n size of the range
+ */
 template<
     class ForwardIterator,
     class Float = typename ForwardIterator::value_type,
