@@ -238,7 +238,7 @@ inline void make_heap(
     Compare compare
 ) noexcept {
     // https://stackoverflow.com/a/3611799/15143062
-    for (std::size_t i = (last - first) / 2; i-- > 0;) {
+    for (std::size_t i = (last - first) >> 1; i-- > 0;) {
         heapify_down(first, last, i, compare);
     }
 }
@@ -408,7 +408,7 @@ private:
             return ResultLocation::src;
         }
 
-        auto mid = n / 2;
+        auto mid = n >> 1;
 
         auto first_half_location = sort_impl(first, first + mid, buffer, compare);
         auto second_half_location = sort_impl(first + mid, last, buffer + mid, compare);
@@ -630,7 +630,7 @@ inline RandomAccessIterator find_median(
     Compare compare
 ) noexcept {
     insertion_sort(first, last, compare);
-    return first + (last - first - 1)/2;
+    return first + ((last - first - 1) >> 1);
 }
 
 }  // namespace detail
@@ -688,9 +688,9 @@ inline void quick_select(
 
     RandomAccessIterator median_of_medians;
     if (medians.size() == 1) {
-        median_of_medians = first + (last - first - 1) / 2;
+        median_of_medians = first + ((last - first - 1) >> 1);
     } else {
-        median_of_medians = medians.begin() + (medians.size() - 1)/2;
+        median_of_medians = medians.begin() + ((medians.size() - 1) >> 1);
         quick_select(medians.begin(), median_of_medians, medians.end(), compare);
         median_of_medians = std::find(first, last, *median_of_medians);
     }
