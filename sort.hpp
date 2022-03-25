@@ -545,11 +545,11 @@ inline void quick_select(
 
     static constexpr auto GROUP_SIZE = 5_u8;
 
-    if (last - 1 <= first) {
+    auto n = last - first;
+
+    if (n <= 1) {
         return;
     }
-
-    std::size_t n = last - first;
 
     std::size_t medians_count = std::ceil(static_cast<double>(n) / GROUP_SIZE);
     std::vector<value_type> medians;
