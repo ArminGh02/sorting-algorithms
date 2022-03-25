@@ -661,7 +661,7 @@ inline void quick_select(
 ) {
     using value_type = typename std::iterator_traits<RandomAccessIterator>::value_type;
 
-    static constexpr auto GROUP_SIZE = 5_u8;
+    constexpr auto GROUP_SIZE = 5_u8;
 
     auto n = last - first;
 
