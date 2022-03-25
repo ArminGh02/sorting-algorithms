@@ -420,90 +420,90 @@ BENCHMARK(bm_sort_vector<std::string>)
 // counting sort and radix sort //
 //////////////////////////////////
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - shuffled - alg::counting_sort")
+    ->Name("sorting a std::vector<unsigned int> of size 10000 and max element <= 1000 - shuffled - alg::counting_sort")
     ->Args({ TestType::shuffled, SortFunc::counting_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - shuffled - alg::radix_sort")
+    ->Name("sorting a std::vector<unsigned int> of size 10000 and max element <= 1000 - shuffled - alg::radix_sort")
     ->Args({ TestType::shuffled, SortFunc::radix_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - shuffled - std::stable_sort")
+    ->Name("sorting a std::vector<unsigned int> of size 10000 and max element <= 1000 - shuffled - std::stable_sort")
     ->Args({ TestType::shuffled, SortFunc::std_stable_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - shuffled - std::sort")
+    ->Name("sorting a std::vector<unsigned int> of size 10000 and max element <= 1000 - shuffled - std::sort")
     ->Args({ TestType::shuffled, SortFunc::std_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - sorted - alg::counting_sort")
+    ->Name("sorting a std::vector<unsigned int> of size 10000 and max element <= 1000 - sorted - alg::counting_sort")
     ->Args({ TestType::sorted, SortFunc::counting_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - sorted - alg::radix_sort")
+    ->Name("sorting a std::vector<unsigned int> of size 10000 and max element <= 1000 - sorted - alg::radix_sort")
     ->Args({ TestType::sorted, SortFunc::radix_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - sorted - std::stable_sort")
+    ->Name("sorting a std::vector<unsigned int> of size 10000 and max element <= 1000 - sorted - std::stable_sort")
     ->Args({ TestType::sorted, SortFunc::std_stable_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - sorted - std::sort")
+    ->Name("sorting a std::vector<unsigned int> of size 10000 and max element <= 1000 - sorted - std::sort")
     ->Args({ TestType::sorted, SortFunc::std_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - alg::counting_sort")
+    ->Name("sorting a std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - alg::counting_sort")
     ->Args({ TestType::reverse_sorted, SortFunc::counting_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - alg::radix_sort")
+    ->Name("sorting a std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - alg::radix_sort")
     ->Args({ TestType::reverse_sorted, SortFunc::radix_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - std::stable_sort")
+    ->Name("sorting a std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - std::stable_sort")
     ->Args({ TestType::reverse_sorted, SortFunc::std_stable_sort });
 
 BENCHMARK(bm_counting_sort_and_radix_sort)
-    ->Name("sorting std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - std::sort")
+    ->Name("sorting a std::vector<unsigned int> of size 10000 and max element <= 1000 - reverse sorted - std::sort")
     ->Args({ TestType::reverse_sorted, SortFunc::std_sort });
 
 /////////////////
 // bucket sort //
 /////////////////
 BENCHMARK(bm_bucket_sort)
-    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - shuffled - alg::bucket_sort")
+    ->Name("sorting a std::vector<double> of size 10000 where 0<=vec[i]<1 - shuffled - alg::bucket_sort")
     ->Args({ TestType::shuffled, SortFunc::bucket_sort });
 
 BENCHMARK(bm_bucket_sort)
-    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - shuffled - std::stable_sort")
+    ->Name("sorting a std::vector<double> of size 10000 where 0<=vec[i]<1 - shuffled - std::stable_sort")
     ->Args({ TestType::shuffled, SortFunc::std_stable_sort });
 
 BENCHMARK(bm_bucket_sort)
-    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - shuffled - std::sort")
+    ->Name("sorting a std::vector<double> of size 10000 where 0<=vec[i]<1 - shuffled - std::sort")
     ->Args({ TestType::shuffled, SortFunc::std_sort });
 
 BENCHMARK(bm_bucket_sort)
-    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - sorted - alg::bucket_sort")
+    ->Name("sorting a std::vector<double> of size 10000 where 0<=vec[i]<1 - sorted - alg::bucket_sort")
     ->Args({ TestType::sorted, SortFunc::bucket_sort });
 
 BENCHMARK(bm_bucket_sort)
-    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - sorted - std::stable_sort")
+    ->Name("sorting a std::vector<double> of size 10000 where 0<=vec[i]<1 - sorted - std::stable_sort")
     ->Args({ TestType::sorted, SortFunc::std_stable_sort });
 
 BENCHMARK(bm_bucket_sort)
-    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - sorted - std::sort")
+    ->Name("sorting a std::vector<double> of size 10000 where 0<=vec[i]<1 - sorted - std::sort")
     ->Args({ TestType::sorted, SortFunc::std_sort });
 
 BENCHMARK(bm_bucket_sort)
-    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - reverse sorted - alg::bucket_sort")
+    ->Name("sorting a std::vector<double> of size 10000 where 0<=vec[i]<1 - reverse sorted - alg::bucket_sort")
     ->Args({ TestType::reverse_sorted, SortFunc::bucket_sort });
 
 BENCHMARK(bm_bucket_sort)
-    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - reverse sorted - std::stable_sort")
+    ->Name("sorting a std::vector<double> of size 10000 where 0<=vec[i]<1 - reverse sorted - std::stable_sort")
     ->Args({ TestType::reverse_sorted, SortFunc::std_stable_sort });
 
 BENCHMARK(bm_bucket_sort)
-    ->Name("sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - reverse sorted - std::sort")
+    ->Name("sorting a std::vector<double> of size 10000 where 0<=vec[i]<1 - reverse sorted - std::sort")
     ->Args({ TestType::reverse_sorted, SortFunc::std_sort });
 
 BENCHMARK_MAIN();
