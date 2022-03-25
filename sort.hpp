@@ -293,12 +293,15 @@ inline void heap_sort(
  * @brief merge two sorted ranges algorithm
  *
  * @details Merges the ranges @p [first1,last1) and @p [first2,last2) into
- * the sorted range @p [result, result + (last1-first1) + (last2-first2)).
+ * the sorted range @p [result,result+(last1-first1)+(last2-first2)).
  * Both input ranges must be sorted, and the
  * output range must not overlap with either of the input ranges.
  * The sort is stable, that is, for equivalent elements in the
  * two ranges, elements from the first range will always come
  * before elements from the second.
+ *
+ * @note a call to this function causes the @p [first1,last1) and @p [first2,last2)
+ * to contain elements witch are on an unspecified state due to move.
  *
  * @param first1 an input iterator
  * @param last1 an input iterator
