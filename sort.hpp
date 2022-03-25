@@ -365,8 +365,8 @@ template<
 class MergeSorter {
 
 public:
-    using pointer = typename RandomAccessIterator::pointer;
-    using difference_type = typename RandomAccessIterator::difference_type;
+    using pointer = typename std::iterator_traits<RandomAccessIterator>::pointer;
+    using difference_type = typename std::iterator_traits<RandomAccessIterator>::difference_type;
 
     static void sort(
         RandomAccessIterator first,
