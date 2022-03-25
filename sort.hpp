@@ -309,16 +309,17 @@ inline void heap_sort(
  * @return an output iterator to element past the last element copied.
  */
 template<
-    class InputIterator,
+    class InputIterator1,
+    class InputIterator2,
     class OutputIterator,
     class Compare,
-    class T = typename InputIterator::value_type
+    class T = typename InputIterator1::value_type
 >
 inline OutputIterator merge(
-    InputIterator first1,
-    InputIterator last1,
-    InputIterator first2,
-    InputIterator last2,
+    InputIterator1 first1,
+    InputIterator1 last1,
+    InputIterator2 first2,
+    InputIterator2 last2,
     OutputIterator result,
     Compare compare
 ) noexcept(std::is_nothrow_move_assignable<T>::value) {
