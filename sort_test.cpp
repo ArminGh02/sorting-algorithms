@@ -12,15 +12,12 @@
 static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
 
 TEST_CASE("general sorting functions") {
-    constexpr std::size_t ELEMENTS_COUNT = 500;
-
-    std::vector<int> to_sort;
-    to_sort.reserve(ELEMENTS_COUNT);
+    std::vector<int> to_sort(500);
 
     std::uniform_int_distribution<> dist;
-    for (std::size_t i = 0; i < ELEMENTS_COUNT; ++i) {
-        to_sort.push_back(dist(gen));
-    }
+    std::generate(to_sort.begin(), to_sort.end(), [&dist]() {
+        return dist(gen);
+    });
 
     SECTION("bubble_sort") {
         SECTION("default compare") {
@@ -95,16 +92,14 @@ TEST_CASE("general sorting functions") {
 }
 
 TEST_CASE("radix_sort & counting_sort") {
-    constexpr std::size_t ELEMENTS_COUNT = 500;
-
-    std::vector<unsigned> to_sort;
-    to_sort.reserve(ELEMENTS_COUNT);
+    std::vector<unsigned> to_sort(500);
 
     constexpr auto MAX_ELEMENT = 100U;
     std::uniform_int_distribution<unsigned> dist(0U, MAX_ELEMENT);
-    for (std::size_t i = 0; i < ELEMENTS_COUNT; ++i) {
-        to_sort.push_back(dist(gen));
-    }
+
+    std::generate(to_sort.begin(), to_sort.end(), [&dist]() {
+        return dist(gen);
+    });
 
     SECTION("counting_sort") {
         alg::counting_sort(to_sort.begin(), to_sort.end(), MAX_ELEMENT);
@@ -117,15 +112,12 @@ TEST_CASE("radix_sort & counting_sort") {
 }
 
 TEST_CASE("bucket_sort") {
-    constexpr std::size_t ELEMENTS_COUNT = 100;
-
-    std::vector<double> to_sort;
-    to_sort.reserve(ELEMENTS_COUNT);
+    std::vector<double> to_sort(500);
 
     std::uniform_real_distribution<> dist;
-    for (std::size_t i = 0; i < ELEMENTS_COUNT; ++i) {
-        to_sort.push_back(dist(gen));
-    }
+    std::generate(to_sort.begin(), to_sort.end(), [&dist]() {
+        return dist(gen);
+    });
 
     SECTION("random access iterator") {
         alg::bucket_sort(to_sort.begin(), to_sort.end());
@@ -144,15 +136,12 @@ TEST_CASE("bucket_sort") {
 }
 
 TEST_CASE("quick_select") {
-    constexpr std::size_t ELEMENTS_COUNT = 100;
-
-    std::vector<int> sample_array;
-    sample_array.reserve(ELEMENTS_COUNT);
+    std::vector<int> sample_array(500);
 
     std::uniform_int_distribution<> dist;
-    for (std::size_t i = 0; i < ELEMENTS_COUNT; ++i) {
-        sample_array.push_back(dist(gen));
-    }
+    std::generate(sample_array.begin(), sample_array.end(), [&dist]() {
+        return dist(gen);
+    });
 
     auto sorted = sample_array;
     std::sort(sorted.begin(), sorted.end());
