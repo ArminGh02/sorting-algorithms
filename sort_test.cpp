@@ -31,6 +31,11 @@ TEST_CASE("general sorting functions") {
             alg::bubble_sort(to_sort.begin(), to_sort.end(), std::greater<int>());
             REQUIRE(std::is_sorted(to_sort.begin(), to_sort.end(), std::greater<int>()));
         }
+        SECTION("forward iterator") {
+            std::forward_list<int> forward_list(to_sort.begin(), to_sort.end());
+            alg::bubble_sort(forward_list.begin(), forward_list.end());
+            REQUIRE(std::is_sorted(forward_list.begin(), forward_list.end()));
+        }
     }
     SECTION("insertion_sort") {
         SECTION("default compare") {
