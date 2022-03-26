@@ -7,7 +7,7 @@
 
 #include <benchmark/benchmark.h>
 
-#include "sort.hpp"
+#include <sorting_algorithms/sort.hpp>
 
 struct SortFunc { enum type {
     bubble_sort,

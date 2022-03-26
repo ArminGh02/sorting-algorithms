@@ -7,10 +7,15 @@ function(Core_ConfigureProjectTests)
   )
   FetchContent_MakeAvailable(Catch2)
 
-  add_executable(${PROJECT_NAME}Tests test/sort_test.cpp)
-  target_link_libraries(${PROJECT_NAME}Tests PRIVATE Catch2::Catch2)
+  set(TargetName ${PROJECT_NAME}Tests)
+
+  add_executable(${TargetName} test/sort_test.cpp)
+  target_link_libraries(${TargetName} PRIVATE
+    Catch2::Catch2
+    SortAlgorithmsLibrary
+  )
 
   include(CTest)
   include(${Catch2_SOURCE_DIR}/contrib/Catch.cmake)
-  catch_discover_tests(${PROJECT_NAME}Tests)
+  catch_discover_tests(${TargetName})
 endfunction()

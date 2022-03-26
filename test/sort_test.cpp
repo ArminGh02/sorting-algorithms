@@ -7,7 +7,7 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include "sort.hpp"
+#include <sorting_algorithms/sort.hpp>
 
 static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
 
