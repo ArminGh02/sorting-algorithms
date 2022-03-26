@@ -113,17 +113,21 @@ inline std::vector<std::string> get_random_vector<std::string>(std::size_t size)
 template<class T>
 static void bm_sort_vector(benchmark::State& state) {
     static auto vec = get_random_vector<T>(10000U);
+    static auto last_test = TestType::shuffled;
 
     auto test = static_cast<TestType::type>(state.range(0));
-    switch (test) {
-    case TestType::shuffled:
-        break;
-    case TestType::sorted:
-        std::sort(vec.begin(), vec.end());
-        break;
-    case TestType::reverse_sorted:
-        std::sort(vec.rbegin(), vec.rend());
-        break;
+    if (test != last_test) {
+        switch (test) {
+        case TestType::shuffled:
+            break;
+        case TestType::sorted:
+            std::sort(vec.begin(), vec.end());
+            break;
+        case TestType::reverse_sorted:
+            std::sort(vec.rbegin(), vec.rend());
+            break;
+        }
+        last_test = test;
     }
 
     for (auto _ : state) {
@@ -140,17 +144,21 @@ static void bm_sort_vector(benchmark::State& state) {
 static void bm_counting_sort_and_radix_sort(benchmark::State& state) {
     constexpr auto MAX = 1000U;
     static auto vec = random_int_vector(10000U, MAX);
+    static auto last_test = TestType::shuffled;
 
     auto test = static_cast<TestType::type>(state.range(0));
-    switch (test) {
-    case TestType::shuffled:
-        break;
-    case TestType::sorted:
-        std::sort(vec.begin(), vec.end());
-        break;
-    case TestType::reverse_sorted:
-        std::sort(vec.rbegin(), vec.rend());
-        break;
+    if (test != last_test) {
+        switch (test) {
+        case TestType::shuffled:
+            break;
+        case TestType::sorted:
+            std::sort(vec.begin(), vec.end());
+            break;
+        case TestType::reverse_sorted:
+            std::sort(vec.rbegin(), vec.rend());
+            break;
+        }
+        last_test = test;
     }
 
     for (auto _ : state) {
@@ -182,17 +190,21 @@ static void bm_counting_sort_and_radix_sort(benchmark::State& state) {
 
 static void bm_bucket_sort(benchmark::State& state) {
     static auto vec = random_double_vector(10000U, 0.0, 1.0);
+    static auto last_test = TestType::shuffled;
 
     auto test = static_cast<TestType::type>(state.range(0));
-    switch (test) {
-    case TestType::shuffled:
-        break;
-    case TestType::sorted:
-        std::sort(vec.begin(), vec.end());
-        break;
-    case TestType::reverse_sorted:
-        std::sort(vec.rbegin(), vec.rend());
-        break;
+    if (test != last_test) {
+        switch (test) {
+        case TestType::shuffled:
+            break;
+        case TestType::sorted:
+            std::sort(vec.begin(), vec.end());
+            break;
+        case TestType::reverse_sorted:
+            std::sort(vec.rbegin(), vec.rend());
+            break;
+        }
+        last_test = test;
     }
 
     for (auto _ : state) {
