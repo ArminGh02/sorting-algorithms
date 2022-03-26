@@ -93,8 +93,8 @@ inline void bubble_sort_impl(
  * for small ranges containing less than 10 elements.
  * Usually you would be better off using alg::insertion_sort.
  *
- * @param first a bidirectional iterator
- * @param last a bidirectional iterator
+ * @param first a forward iterator
+ * @param last a forward iterator
  * @param compare a comparison functor
  */
 template<class ForwardIterator, class Compare>
@@ -169,8 +169,8 @@ inline void insertion_sort(
  * The good thing about selection sort is it never makes more than O(n)
  * swaps and can be useful when memory write is a costly operation.
  *
- * @param first a bidirectional iterator
- * @param last a bidirectional iterator
+ * @param first a forward iterator
+ * @param last a forward iterator
  * @param compare a comparison functor
  */
 template<class ForwardIterator, class Compare>
