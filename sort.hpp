@@ -173,18 +173,17 @@ inline void insertion_sort(
  * @param last a bidirectional iterator
  * @param compare a comparison functor
  */
-template<class BidirectionalIterator, class Compare>
+template<class ForwardIterator, class Compare>
 inline void selection_sort(
-    BidirectionalIterator first,
-    BidirectionalIterator last,
+    ForwardIterator first,
+    ForwardIterator last,
     Compare compare
 ) noexcept {
     if (first == last) {
         return;
     }
 
-    auto e = last;
-    for (--e; first != e; ++first) {
+    for (; first != last; ++first) {
         auto minPos = first;
         auto it = first;
         for (++it; it != last; ++it) {
