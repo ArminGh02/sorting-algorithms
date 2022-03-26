@@ -75,6 +75,7 @@ sorting std::vector<int> of size 10000 - reverse sorted - alg::merge_sort/2/4   
 sorting std::vector<int> of size 10000 - reverse sorted - alg::quick_sort/2/5                                     227849 ns       230164 ns         2987
 sorting std::vector<int> of size 10000 - reverse sorted - std::stable_sort/2/9                                    116118 ns       119629 ns         6400
 sorting std::vector<int> of size 10000 - reverse sorted - std::sort/2/10                                           69432 ns        69754 ns        11200
+
 sorting std::vector<std::string> of size 10000 - shuffled - alg::bubble_sort/0/0                               861626300 ns    859375000 ns            1
 sorting std::vector<std::string> of size 10000 - shuffled - alg::insertion_sort/0/1                            197825600 ns    203125000 ns            4
 sorting std::vector<std::string> of size 10000 - shuffled - alg::selection_sort/0/2                            324119900 ns    320312500 ns            2
@@ -99,6 +100,7 @@ sorting std::vector<std::string> of size 10000 - reverse sorted - alg::merge_sor
 sorting std::vector<std::string> of size 10000 - reverse sorted - alg::quick_sort/2/5                            3801915 ns      3491620 ns          179
 sorting std::vector<std::string> of size 10000 - reverse sorted - std::stable_sort/2/9                           1597678 ns      1765971 ns          407
 sorting std::vector<std::string> of size 10000 - reverse sorted - std::sort/2/10                                 1623644 ns      1842752 ns          407
+
 sorting std::vector<unsigned> of size 10000 and max element <= 1000 - shuffled - alg::counting_sort/0/6            27281 ns        28250 ns        24889
 sorting std::vector<unsigned> of size 10000 and max element <= 1000 - shuffled - alg::radix_sort/0/7              289306 ns       291561 ns         2358
 sorting std::vector<unsigned> of size 10000 and max element <= 1000 - shuffled - std::stable_sort/0/9             555590 ns       544085 ns         1120
@@ -111,6 +113,7 @@ sorting std::vector<unsigned> of size 10000 and max element <= 1000 - reverse so
 sorting std::vector<unsigned> of size 10000 and max element <= 1000 - reverse sorted - alg::radix_sort/2/7        566725 ns       531878 ns         1792
 sorting std::vector<unsigned> of size 10000 and max element <= 1000 - reverse sorted - std::stable_sort/2/9       169310 ns       167426 ns         3733
 sorting std::vector<unsigned> of size 10000 and max element <= 1000 - reverse sorted - std::sort/2/10             134904 ns       128691 ns         4978
+
 sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - shuffled - alg::bucket_sort/0/8                    1279151 ns      1286396 ns          498
 sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - shuffled - std::stable_sort/0/9                     734219 ns       725446 ns         1120
 sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - shuffled - std::sort/0/10                           719776 ns       697545 ns          896
