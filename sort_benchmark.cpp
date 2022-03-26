@@ -59,7 +59,7 @@ static std::vector<Int> random_int_vector(std::size_t size, Int max = std::numer
 }
 
 static std::string random_string(std::size_t min_len, std::size_t max_len) {
-    const char charset[] =
+    static const char charset[] =
         "0123456789"
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz";
@@ -71,7 +71,7 @@ static std::string random_string(std::size_t min_len, std::size_t max_len) {
     auto len = length_dist(gen);
     std::string str(len, '\0');
 
-    std::generate_n(str.begin(), len, [charset]() {
+    std::generate_n(str.begin(), len, []() {
         return charset[index_dist(gen)];
     });
 
