@@ -35,22 +35,37 @@
 
 namespace alg {
 
-/**
- * @brief bubble sort algorithm
- *
- * @details This stable in-place O(n^2) algorithm is mostly useful
- * for small ranges containing less than 10 elements.
- * Usually you would be better off using alg::insertion_sort.
- *
- * @param first a bidirectional iterator
- * @param last a bidirectional iterator
- * @param compare a comparison functor
- */
+namespace detail {
+
+template<class ForwardIterator, class Compare>
+inline void bubble_sort_impl(
+    ForwardIterator first,
+    ForwardIterator last,
+    Compare compare,
+    std::forward_iterator_tag
+) noexcept {
+    if (first == last) {
+        return;
+    }
+
+    ForwardIterator current, next;
+    for (; first != last; last = current) {
+        current = next = first;
+
+        for (++next; next != last; current = next, ++next) {
+            if (compare(*next, *current)) {
+                std::iter_swap(current, next);
+            }
+        }
+    }
+}
+
 template<class BidirectionalIterator, class Compare>
-inline void bubble_sort(
+inline void bubble_sort_impl(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    Compare compare
+    Compare compare,
+    std::bidirectional_iterator_tag
 ) noexcept {
     if (first == last) {
         return;
@@ -69,9 +84,32 @@ inline void bubble_sort(
     }
 }
 
-template<class BidirectionalIterator>
-inline void bubble_sort(BidirectionalIterator first, BidirectionalIterator last) noexcept {
-    using value_type = typename std::iterator_traits<BidirectionalIterator>::value_type;
+}  // namespace detail
+
+/**
+ * @brief bubble sort algorithm
+ *
+ * @details This stable in-place O(n^2) algorithm is mostly useful
+ * for small ranges containing less than 10 elements.
+ * Usually you would be better off using alg::insertion_sort.
+ *
+ * @param first a bidirectional iterator
+ * @param last a bidirectional iterator
+ * @param compare a comparison functor
+ */
+template<class ForwardIterator, class Compare>
+inline void bubble_sort(
+    ForwardIterator first,
+    ForwardIterator last,
+    Compare compare
+) noexcept {
+    using iter_category = typename std::iterator_traits<ForwardIterator>::iterator_category;
+    detail::bubble_sort_impl(first, last, compare, iter_category{});
+}
+
+template<class ForwardIterator>
+inline void bubble_sort(ForwardIterator first, ForwardIterator last) noexcept {
+    using value_type = typename std::iterator_traits<ForwardIterator>::value_type;
     bubble_sort(first, last, std::less<value_type>());
 }
 
