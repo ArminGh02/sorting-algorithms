@@ -760,8 +760,8 @@ template<class RandomAccessIterator, class Compare>
 inline void quick_sort_impl_helper(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    int recursion_count,
-    Compare compare
+    Compare compare,
+    int recursion_count
 ) {
     if (last - first <= 16) { // small
         insertion_sort(first, last, compare);
@@ -772,35 +772,35 @@ inline void quick_sort_impl_helper(
         return;
     }
     auto pivot = partition_random(first, last, compare);
-    quick_sort_impl_helper(first, pivot, recursion_count - 1, compare);
-    quick_sort_impl_helper(++pivot, last, recursion_count - 1, compare);
+    quick_sort_impl_helper(first, pivot, compare, recursion_count - 1);
+    quick_sort_impl_helper(++pivot, last, compare, recursion_count - 1);
 }
 
 template<class RandomAccessIterator, class Compare>
 inline void quick_sort_impl(
     RandomAccessIterator first,
     RandomAccessIterator last,
-    std::random_access_iterator_tag iter_tag,
-    Compare compare
+    Compare compare,
+    std::random_access_iterator_tag
 ) {
     auto recursion_count = 2 * detail::log2(last - first);
-    quick_sort_impl_helper(first, last, recursion_count, compare);
+    quick_sort_impl_helper(first, last, compare, recursion_count);
 }
 
 template<class BidirectionalIterator, class Compare>
 inline void quick_sort_impl(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    std::bidirectional_iterator_tag iter_tag,
-    Compare compare
+    Compare compare,
+    std::bidirectional_iterator_tag iter_tag
 ) noexcept {
     if (first == last || first == --last) {
         return;
     }
     ++last;
     auto pivot = partition_pivot_last(first, last, compare);
-    quick_sort_impl(first, pivot, iter_tag, compare);
-    quick_sort_impl(++pivot, last, iter_tag, compare);
+    quick_sort_impl(first, pivot, compare, iter_tag);
+    quick_sort_impl(++pivot, last, compare, iter_tag);
 }
 
 }  // namespace detail
@@ -825,7 +825,7 @@ inline void quick_sort(
     Compare compare
 ) {
     using iter_category = typename std::iterator_traits<BidirectionalIterator>::iterator_category;
-    return detail::quick_sort_impl(first, last, iter_category{}, compare);
+    return detail::quick_sort_impl(first, last, compare, iter_category{});
 }
 
 template<class BidirectionalIterator>
@@ -978,8 +978,8 @@ template<
 inline void bucket_sort_impl(
     ForwardIterator first,
     ForwardIterator last,
-    std::forward_iterator_tag,
-    std::size_t n
+    std::size_t n,
+    std::forward_iterator_tag
 ) {
     std::vector<std::list<Float>> buckets(n);
 
@@ -1006,8 +1006,8 @@ template<
 inline void bucket_sort_impl(
     BidirectionalIterator first,
     BidirectionalIterator last,
-    std::bidirectional_iterator_tag,
-    std::size_t n
+    std::size_t n,
+    std::bidirectional_iterator_tag
 ) {
     std::vector<std::forward_list<Float>> buckets(n);
 
@@ -1045,7 +1045,7 @@ template<
 >
 inline void bucket_sort(ForwardIterator first, ForwardIterator last, std::size_t n) {
     using iter_category = typename std::iterator_traits<ForwardIterator>::iterator_category;
-    detail::bucket_sort_impl(first, last, iter_category{}, n);
+    detail::bucket_sort_impl(first, last, n, iter_category{});
 }
 
 template<
@@ -1054,7 +1054,7 @@ template<
     class = typename std::enable_if<std::is_floating_point<Float>::value>::type
 >
 inline void bucket_sort(RandomAccessIterator first, RandomAccessIterator last) {
-    detail::bucket_sort_impl(first, last, std::random_access_iterator_tag{}, last - first);
+    detail::bucket_sort_impl(first, last, last - first, std::random_access_iterator_tag{});
 }
 
 }  // namespace alg
