@@ -747,11 +747,11 @@ namespace detail {
 
 template<class Int>
 inline Int log2(Int n) {
-	Int i;
-	for (i = 0; n != 0; ++i) {
-		n >>= 1;
+    Int i;
+    for (i = 0; n != 0; ++i) {
+        n >>= 1;
     }
-	return i - 1;
+    return i - 1;
 }
 
 template<class RandomAccessIterator, class Compare>
