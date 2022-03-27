@@ -1,13 +1,16 @@
 
 # Sorting Algorithms
 
-- [About](#about)
-- [Requirements](#requirements)
-- [How to Use](#how-to-use)
-- [Currently Implemented Algorithms](#currently-implemented-algorithms)
-- [Benchmarks](#benchmarks)
-- [Unit Testing](#unit-testing)
-- [Contribution](#contribution)
+- [Sorting Algorithms](#sorting-algorithms)
+  - [About](#about)
+  - [Requirements](#requirements)
+  - [How to Use](#how-to-use)
+  - [Currently Implemented Algorithms](#currently-implemented-algorithms)
+  - [Benchmarks](#benchmarks)
+  - [Unit Testing](#unit-testing)
+  - [Contribution](#contribution)
+    - [Project Goals](#project-goals)
+    - [TODO List](#todo-list)
 
 ## About
 
@@ -128,4 +131,13 @@ All of the implemented functions are tested with **[Catch2](https://github.com/c
 
 ## Contribution
 
-Feel free to contribute by implementing more sorting algorithms or improving the performance of the existing ones.
+### Project Goals
+
+We aim to implement more and more sorting algorithms.  
+We also plan to improve performance as much as possible.
+
+### TODO List
+
+- Use a better algorithm for choosing pivot in quick sort.
+- Add an **in-place** merge sort implementation.
+- Implement tim sort, shell sort, comb sort, shaker sort, etc.
