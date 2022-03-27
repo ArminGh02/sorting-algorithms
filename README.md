@@ -24,7 +24,7 @@ The [benchmarks](benchmark/sort_benchmark.cpp) require at least C++14 and use **
 
 ## How to Use
 
-Just copy the **[sort.hpp](sort.hpp)** header file to your project and include it!  
+Just copy the **[sort.hpp](include/sorting_algorithms/sort.hpp)** header file to your project and include it!  
 All functions are in the ```alg::``` namespace.
 
 ## Currently Implemented Algorithms
