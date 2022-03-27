@@ -18,9 +18,9 @@ Inspired by **[EASTL](https://github.com/electronicarts/EASTL)** and **[MSVC STL
 
 ## Requirements
 
-The [header-only library](sort.hpp) requires at least C++11.  
-The [unit tests](sort_test.cpp) use **[Catch2](https://github.com/catchorg/Catch2)**.  
-The [benchmarks](sort_benchmark.cpp) require at least C++14 and use **[Google Benchmark](https://github.com/google/benchmark)**.
+The [header-only library](include/sorting_algorithms/sort.hpp) requires at least C++11.  
+The [unit tests](test/sort_test.cpp) use **[Catch2](https://github.com/catchorg/Catch2)**.  
+The [benchmarks](benchmark/sort_benchmark.cpp) require at least C++14 and use **[Google Benchmark](https://github.com/google/benchmark)**.
 
 ## How to Use
 
