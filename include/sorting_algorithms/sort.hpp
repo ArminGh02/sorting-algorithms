@@ -669,7 +669,7 @@ inline RandomAccessIterator find_median(
 
 inline namespace literals {
 
-constexpr uint8_t operator"" _u8(uint64_t val) noexcept {
+constexpr uint8_t operator"" _u8(unsigned long long val) noexcept {
     return static_cast<uint8_t>(val);
 }
 
