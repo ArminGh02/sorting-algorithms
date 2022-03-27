@@ -15,9 +15,7 @@ TEST_CASE("general sorting functions") {
     std::vector<int> to_sort(500);
 
     std::uniform_int_distribution<> dist;
-    std::generate(to_sort.begin(), to_sort.end(), [&dist]() {
-        return dist(gen);
-    });
+    std::generate(to_sort.begin(), to_sort.end(), [&dist]() { return dist(gen); });
 
     SECTION("bubble_sort") {
         SECTION("default compare") {
@@ -97,9 +95,7 @@ TEST_CASE("radix_sort & counting_sort") {
     constexpr auto MAX_ELEMENT = 100U;
     std::uniform_int_distribution<unsigned> dist(0U, MAX_ELEMENT);
 
-    std::generate(to_sort.begin(), to_sort.end(), [&dist]() {
-        return dist(gen);
-    });
+    std::generate(to_sort.begin(), to_sort.end(), [&dist]() { return dist(gen); });
 
     SECTION("counting_sort") {
         alg::counting_sort(to_sort.begin(), to_sort.end(), MAX_ELEMENT);
@@ -115,9 +111,7 @@ TEST_CASE("bucket_sort") {
     std::vector<double> to_sort(500);
 
     std::uniform_real_distribution<> dist;
-    std::generate(to_sort.begin(), to_sort.end(), [&dist]() {
-        return dist(gen);
-    });
+    std::generate(to_sort.begin(), to_sort.end(), [&dist]() { return dist(gen); });
 
     SECTION("random access iterator") {
         alg::bucket_sort(to_sort.begin(), to_sort.end());
@@ -139,9 +133,7 @@ TEST_CASE("quick_select") {
     std::vector<int> sample_array(500);
 
     std::uniform_int_distribution<> dist;
-    std::generate(sample_array.begin(), sample_array.end(), [&dist]() {
-        return dist(gen);
-    });
+    std::generate(sample_array.begin(), sample_array.end(), [&dist]() { return dist(gen); });
 
     auto sorted = sample_array;
     std::sort(sorted.begin(), sorted.end());
