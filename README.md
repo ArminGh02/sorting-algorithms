@@ -11,21 +11,20 @@
 
 ## About
 
-In this repository, different sorting algorithms are implemented in C++ with an emphasis on performance.
-The functions are also tested and benchmarked.
-More algorithms will be implemented here and perhaps the performance of the implemented ones will improve.
-
+In this repository, different sorting algorithms are implemented in C++ with an emphasis on performance.  
+The functions are also tested and benchmarked.  
+More algorithms will be implemented here and perhaps the performance of the implemented ones will improve.  
 Inspired by **[EASTL](https://github.com/electronicarts/EASTL)** and **[MSVC STL](https://github.com/microsoft/STL)**.
 
 ## Requirements
 
-The [header-only library](sort.hpp) requires at least C++11.
-The [unit tests](sort_test.cpp) use **[Catch2](https://github.com/catchorg/Catch2)**.
+The [header-only library](sort.hpp) requires at least C++11.  
+The [unit tests](sort_test.cpp) use **[Catch2](https://github.com/catchorg/Catch2)**.  
 The [benchmarks](sort_benchmark.cpp) require at least C++14 and use **[Google Benchmark](https://github.com/google/benchmark)**.
 
 ## How to Use
 
-Just copy the **[sort.hpp](sort.hpp)** header file to your project and include it!
+Just copy the **[sort.hpp](sort.hpp)** header file to your project and include it!  
 All functions are in the ```alg::``` namespace.
 
 ## Currently Implemented Algorithms
@@ -45,9 +44,7 @@ All functions are in the ```alg::``` namespace.
 
 The output of the benchmark is similar to:
 
-<details><summary>Benchmark Output (click to expand)</summary>
-
-```
+```text
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 Benchmark                                                                                                              Time             CPU   Iterations
 --------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -124,8 +121,6 @@ sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - reverse sorted - a
 sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - reverse sorted - std::stable_sort/2/9               367886 ns       368238 ns         1867
 sorting std::vector<double> of size 10000 where 0<=vec[i]<1 - reverse sorted - std::sort/2/10                     111245 ns       111607 ns         5600
 ```
-
-</details>
 
 ## Unit Testing
 
