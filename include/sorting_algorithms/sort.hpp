@@ -1,6 +1,4 @@
 /*
- * author: Armin Gh (arminghorbanian02@gmail.com)
- *
  * This file implements the following sorting algorithms:
  *    bubble_sort       stable      in-place
  *    insertion_sort    stable      in-place
