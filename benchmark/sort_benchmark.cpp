@@ -25,9 +25,9 @@ struct SortFunc { enum type {
 }; };
 
 struct TestType { enum type {
-        shuffled,
-        sorted,
-        reverse_sorted,
+    shuffled,
+    sorted,
+    reverse_sorted,
 }; };
 // clang-format on
 
