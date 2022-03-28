@@ -87,15 +87,15 @@ static std::vector<double> random_double_vector(std::size_t size, double min, do
 }
 
 template <class T>
-static std::vector<T> get_random_vector(std::size_t size) = delete;
+static std::vector<T> random_vector(std::size_t size) = delete;
 
 template <>
-inline std::vector<int> get_random_vector<int>(std::size_t size) {
+inline std::vector<int> random_vector<int>(std::size_t size) {
     return random_int_vector<int>(size);
 }
 
 template <>
-inline std::vector<std::string> get_random_vector<std::string>(std::size_t size) {
+inline std::vector<std::string> random_vector<std::string>(std::size_t size) {
     std::vector<std::string> vec(size);
 
     std::generate(vec.begin(), vec.end(), []() { return random_string(0U, 1000U); });
@@ -105,7 +105,7 @@ inline std::vector<std::string> get_random_vector<std::string>(std::size_t size)
 
 template <class T>
 static void bm_sort_vector(benchmark::State& state) {
-    static auto vec       = get_random_vector<T>(10000U);
+    static auto vec       = random_vector<T>(10000U);
     static auto last_test = TestType::shuffled;
 
     auto test = static_cast<TestType::type>(state.range(0));
