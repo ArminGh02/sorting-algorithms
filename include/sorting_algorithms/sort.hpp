@@ -192,7 +192,7 @@ inline void selection_sort(BidirectionalIterator first, BidirectionalIterator la
 template <class RandomAccessIterator, class Compare>
 inline void
 heapify_down(RandomAccessIterator first, RandomAccessIterator last, std::size_t i, Compare compare) noexcept {
-    std::size_t n = last - first;
+    auto n = last - first;
     while (true) {
         auto left  = i * 2 + 1;
         auto right = i * 2 + 2;
