@@ -31,21 +31,6 @@ struct TestType { enum type {
 }; };
 // clang-format on
 
-template <class Iterator>
-using SortFuncPtr = void (*)(Iterator, Iterator);
-
-template <class Iterator>
-static std::unordered_map<SortFunc::type, SortFuncPtr<Iterator>> func_map = {
-    {SortFunc::bubble_sort,     alg::bubble_sort   },
-    {SortFunc::insertion_sort,  alg::insertion_sort},
-    {SortFunc::selection_sort,  alg::selection_sort},
-    {SortFunc::heap_sort,       alg::heap_sort     },
-    {SortFunc::merge_sort,      alg::merge_sort    },
-    {SortFunc::quick_sort,      alg::quick_sort    },
-    {SortFunc::std_stable_sort, std::stable_sort   },
-    {SortFunc::std_sort,        std::sort          },
-};
-
 template <class Int>
 static std::vector<Int> random_int_vector(std::size_t size, Int max = std::numeric_limits<Int>::max()) {
     static std::mt19937 gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
@@ -105,6 +90,20 @@ inline std::vector<std::string> random_vector<std::string>(std::size_t size) {
 
 template <class T>
 static void bm_sort_vector(benchmark::State& state) {
+    using iterator      = typename std::vector<T>::iterator;
+    using sort_func_ptr = void (*)(iterator, iterator);
+
+    static const std::unordered_map<SortFunc::type, sort_func_ptr> func_map = {
+        {SortFunc::bubble_sort,     alg::bubble_sort   },
+        {SortFunc::insertion_sort,  alg::insertion_sort},
+        {SortFunc::selection_sort,  alg::selection_sort},
+        {SortFunc::heap_sort,       alg::heap_sort     },
+        {SortFunc::merge_sort,      alg::merge_sort    },
+        {SortFunc::quick_sort,      alg::quick_sort    },
+        {SortFunc::std_stable_sort, std::stable_sort   },
+        {SortFunc::std_sort,        std::sort          },
+    };
+
     static auto vec       = random_vector<T>(10000U);
     static auto last_test = TestType::shuffled;
 
@@ -127,7 +126,7 @@ static void bm_sort_vector(benchmark::State& state) {
         state.PauseTiming();
         auto tmp          = vec;
         auto func_as_enum = static_cast<SortFunc::type>(state.range(1));
-        auto sort_func    = func_map<typename std::vector<T>::iterator>[func_as_enum];
+        auto sort_func    = func_map.find(func_as_enum)->second;
         state.ResumeTiming();
 
         sort_func(tmp.begin(), tmp.end());
