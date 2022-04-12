@@ -54,3 +54,8 @@
 .ionide
 
 *.user
+
+include/benchmark
+include/catch2
+commands.txt
+build

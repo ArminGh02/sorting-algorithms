@@ -703,7 +703,7 @@ template <class BidirectionalIterator,
           class Int = typename std::iterator_traits<BidirectionalIterator>::value_type,
           class     = typename std::enable_if<std::is_integral<Int>::value>::type>
 inline void counting_sort(BidirectionalIterator first, BidirectionalIterator last, Int max, std::size_t n) {
-    std::vector<Int> counter(max + 1);
+    std::vector<std::size_t> counter(max + 1);
     for (auto it = first; it != last; ++it) {
         ++counter[*it];
     }
@@ -737,7 +737,7 @@ template <class BidirectionalIterator,
           class Int = typename std::iterator_traits<BidirectionalIterator>::value_type,
           class     = typename std::enable_if<std::is_integral<Int>::value>::type>
 inline void counting_sort_digit(BidirectionalIterator first, BidirectionalIterator last, Int exp, std::size_t n) {
-    std::vector<Int> counter(10);
+    std::vector<std::size_t> counter(10);
     for (auto it = first; it != last; ++it) {
         ++counter[(*it / exp) % 10];
     }
