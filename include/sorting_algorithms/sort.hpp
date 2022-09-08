@@ -38,10 +38,6 @@ namespace detail {
 template <class ForwardIterator, class Compare>
 inline void
 bubble_sort_impl(ForwardIterator first, ForwardIterator last, Compare compare, std::forward_iterator_tag) noexcept {
-    if (first == last) {
-        return;
-    }
-
     ForwardIterator current, next;
     for (; first != last; last = current) {
         current = next = first;
