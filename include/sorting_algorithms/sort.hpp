@@ -21,6 +21,8 @@
 #ifndef SORT_HPP
 #define SORT_HPP
 
+#define ENABLE_OPTIMIZATION 0
+
 #include <algorithm>
 #include <chrono>
 #include <cmath>
@@ -39,6 +41,7 @@ template <class ForwardIterator, class Compare>
 inline void
 bubble_sort_impl(ForwardIterator first, ForwardIterator last, Compare compare, std::forward_iterator_tag) noexcept {
     ForwardIterator current, next;
+    
     for (; first != last; last = current) {
         current = next = first;
 
@@ -188,7 +191,7 @@ inline void selection_sort(BidirectionalIterator first, BidirectionalIterator la
 template <class RandomAccessIterator, class Compare>
 inline void
 heapify_down(RandomAccessIterator first, RandomAccessIterator last, std::size_t i, Compare compare) noexcept {
-    auto n = last - first;
+    std::size_t n = last - first;
     while (true) {
         auto left  = i * 2 + 1;
         auto right = i * 2 + 2;
@@ -413,7 +416,11 @@ template <class RandomAccessIterator,
           class Compare,
           class T = typename std::iterator_traits<RandomAccessIterator>::value_type>
 inline void merge_sort_buf(RandomAccessIterator first, RandomAccessIterator last, T* buffer, Compare compare) {
+#if ENABLE_OPTIMIZATION
     detail::MergeSorter<RandomAccessIterator, Compare, 16>::sort(first, last, buffer, compare);
+#else // Not ENABLE_OPTIMIZATION
+    detail::MergeSorter<RandomAccessIterator, Compare, 0>::sort(first, last, buffer, compare);
+#endif // ENABLE_OPTIMIZATION
 }
 
 template <class RandomAccessIterator, class T = typename std::iterator_traits<RandomAccessIterator>::value_type>
@@ -856,5 +863,306 @@ inline void bucket_sort(RandomAccessIterator first, RandomAccessIterator last) {
 }
 
 }  // namespace alg
+
+// namespace extra
+#include <utility>
+#include <functional>
+#include <iterator>
+
+namespace extra {
+
+struct PartitionScheme {
+  struct Lomuto {};
+  struct Hoare {};
+  struct DutchFlag {};
+};
+
+/* @reference Lomuto's Partitioning Scheme
+
+@link https://github.com/raywenderlich/swift-algorithm-club/tree/master/Quicksort
+
+func partitionLomuto<T: Comparable>(_ a: inout [T], low: Int, high: Int) -> Int {
+  let pivot = a[high]
+
+  var i = low
+  for j in low..<high {
+    if a[j] <= pivot {
+      (a[i], a[j]) = (a[j], a[i])
+      i += 1
+    }
+  }
+
+  (a[i], a[high]) = (a[high], a[i])
+  return i
+}
+
+func quicksortLomuto<T: Comparable>(_ a: inout [T], low: Int, high: Int) {
+  if low < high {
+    let p = partitionLomuto(&a, low: low, high: high)
+    quicksortLomuto(&a, low: low, high: p - 1)
+    quicksortLomuto(&a, low: p + 1, high: high)
+  }
+}
+*/
+template <class BidirectionalIterator, class Compare>
+inline BidirectionalIterator 
+partition_lomuto_scheme(BidirectionalIterator first,
+                        BidirectionalIterator last,
+                        Compare compare) noexcept {
+    --last;
+    
+    auto it = first;
+    for (; first != last; ++first) {
+        if (compare(*first, *last)) {
+            std::iter_swap(first, it);
+            ++it;
+        }
+    }
+
+    std::iter_swap(last, it);
+    return it;
+}
+
+/* @reference Hoare's Partitioning Scheme
+
+@link https://github.com/raywenderlich/swift-algorithm-club/tree/master/Quicksort
+
+func partitionHoare<T: Comparable>(_ a: inout [T], low: Int, high: Int) -> Int {
+  let pivot = a[low]
+  var i = low - 1
+  var j = high + 1
+
+  while true {
+    repeat { j -= 1 } while a[j] > pivot
+    repeat { i += 1 } while a[i] < pivot
+
+    if i < j {
+      a.swapAt(i, j)
+    } else {
+      return j
+    }
+  }
+}
+
+func quicksortHoare<T: Comparable>(_ a: inout [T], low: Int, high: Int) {
+  if low < high {
+    let p = partitionHoare(&a, low: low, high: high)
+    quicksortHoare(&a, low: low, high: p)
+    quicksortHoare(&a, low: p + 1, high: high)
+  }
+}
+*/
+template <class RandomAccessIterator, class Compare>
+inline RandomAccessIterator 
+partition_hoare_scheme(RandomAccessIterator first,
+                       RandomAccessIterator last,
+                       Compare compare) noexcept {
+    auto i = --first;
+    auto j = last;
+    ++first;
+
+    while (true) {
+        do { --j; } while (compare(*first, *j));
+        do { ++i; } while (compare(*i, *first));
+
+        if (i >= j) {
+            return j;
+        }
+        std::iter_swap(i, j);
+    }
+}
+
+/* @reference Dutch National Flag Partitioning Scheme
+
+@link https://github.com/raywenderlich/swift-algorithm-club/tree/master/Quicksort
+
+func partitionDutchFlag<T: Comparable>(_ a: inout [T], low: Int, high: Int, pivotIndex: Int) -> (Int, Int) {
+  let pivot = a[pivotIndex]
+
+  var smaller = low
+  var equal = low
+  var larger = high
+
+  while equal <= larger {
+    if a[equal] < pivot {
+      swap(&a, smaller, equal)
+      smaller += 1
+      equal += 1
+    } else if a[equal] == pivot {
+      equal += 1
+    } else {
+      swap(&a, equal, larger)
+      larger -= 1
+    }
+  }
+  return (smaller, larger)
+}
+
+func quicksortDutchFlag<T: Comparable>(_ a: inout [T], low: Int, high: Int) {
+  if low < high {
+    let pivotIndex = random(min: low, max: high)
+    let (p, q) = partitionDutchFlag(&a, low: low, high: high, pivotIndex: pivotIndex)
+    quicksortDutchFlag(&a, low: low, high: p - 1)
+    quicksortDutchFlag(&a, low: q + 1, high: high)
+  }
+}
+*/
+template <class RandomAccessIterator, class Compare>
+inline std::pair<RandomAccessIterator, RandomAccessIterator>
+partition_dutchflag_scheme(RandomAccessIterator first,
+                           RandomAccessIterator last,
+                           Compare compare) noexcept {
+    auto p = *(--last);
+    auto e = first;
+
+    while (e <= last) {
+        if (compare(*e, p)) { std::iter_swap(first++, e++); } 
+        else if (compare(p, *e)) { std::iter_swap(e, last--); } 
+        else { e++; }
+    }
+
+    return {first, last};
+}
+
+namespace detail {
+
+#if ENABLE_OPTIMIZATION
+
+template <class RandomAccessIterator, class Compare, class _PartitionScheme>
+inline void
+quick_sort_impl_helper(RandomAccessIterator first, 
+                       RandomAccessIterator last, 
+                       Compare compare, 
+                       int recursion_count,
+                       _PartitionScheme scheme) noexcept {
+    if (last - first <= 16) {  // small
+        alg::insertion_sort(first, last, compare);
+        return;
+    }
+    if (recursion_count <= 0) {  // too many divisions
+        alg::heap_sort(first, last, compare);
+        return;
+    }
+
+    if constexpr (std::is_same<_PartitionScheme, PartitionScheme::Lomuto>::value) {
+        auto pivot = partition_lomuto_scheme(first, last, compare);
+        quick_sort_impl_helper(first, pivot, compare, recursion_count - 1, scheme);
+        quick_sort_impl_helper(++pivot, last, compare, recursion_count - 1, scheme);
+        return;
+    }
+    if constexpr (std::is_same<_PartitionScheme, PartitionScheme::Hoare>::value) {
+        auto pivot = partition_hoare_scheme(first, last, compare);
+        quick_sort_impl_helper(first, ++pivot, compare, recursion_count - 1, scheme);
+        quick_sort_impl_helper(pivot, last, compare, recursion_count - 1, scheme);
+        return;
+    }
+    if constexpr (std::is_same<_PartitionScheme, PartitionScheme::DutchFlag>::value) {
+        auto pivots = partition_dutchflag_scheme(first, last, compare);
+        quick_sort_impl_helper(first, pivots.first, compare, recursion_count - 1, scheme);
+        quick_sort_impl_helper(++pivots.second, last, compare, recursion_count - 1, scheme);
+        return;
+    }
+}
+
+template <class RandomAccessIterator, class Compare, class PartitionScheme>
+inline void quick_sort_impl(RandomAccessIterator first,
+                            RandomAccessIterator last,
+                            Compare compare,
+                            std::random_access_iterator_tag,
+                            PartitionScheme scheme) {
+    auto recursion_count = 2 * alg::detail::log2(last - first);
+    quick_sort_impl_helper(first, last, compare, recursion_count, scheme);
+}
+
+#else // Not ENABLE_OPTIMIZATION
+
+template <class RandomAccessIterator, class Compare, class _PartitionScheme>
+inline void quick_sort_impl(RandomAccessIterator first,
+                            RandomAccessIterator last,
+                            Compare compare,
+                            std::random_access_iterator_tag iter_tag,
+                            _PartitionScheme scheme) {
+    if (first == last || first == --last) { return; }
+    ++last;
+
+    if constexpr (std::is_same<_PartitionScheme, PartitionScheme::Lomuto>::value) {
+        auto pivot = partition_lomuto_scheme(first, last, compare);
+        quick_sort_impl(first, pivot, compare, iter_tag, scheme);
+        quick_sort_impl(++pivot, last, compare, iter_tag, scheme);
+        return;
+    }
+    if constexpr (std::is_same<_PartitionScheme, PartitionScheme::Hoare>::value) {
+        auto pivot = partition_hoare_scheme(first, last, compare);
+        quick_sort_impl(first, ++pivot, compare, iter_tag, scheme);
+        quick_sort_impl(pivot, last, compare, iter_tag, scheme);
+        return;
+    }
+    if constexpr (std::is_same<_PartitionScheme, PartitionScheme::DutchFlag>::value) {
+        auto pivots = partition_dutchflag_scheme(first, last, compare);
+        quick_sort_impl(first, pivots.first, compare, iter_tag, scheme);
+        quick_sort_impl(++pivots.second, last, compare, iter_tag, scheme);
+        return;
+    }
+}
+
+#endif // ENABLE_OPTIMIZATION
+
+template <class BidirectionalIterator, class Compare, class _PartitionScheme>
+inline void quick_sort_impl(BidirectionalIterator first,
+                            BidirectionalIterator last,
+                            Compare compare,
+                            std::bidirectional_iterator_tag iter_tag,
+                            _PartitionScheme scheme) noexcept {
+    if (first == last || first == --last) { return; }
+    ++last;
+
+    if constexpr (std::is_same<_PartitionScheme, PartitionScheme::Lomuto>::value) {
+        auto pivot = partition_lomuto_scheme(first, last, compare);
+        quick_sort_impl(first, pivot, compare, iter_tag, scheme);
+        quick_sort_impl(++pivot, last, compare, iter_tag, scheme);
+        return;
+    }
+    static_assert(!std::is_same<_PartitionScheme, PartitionScheme::Hoare>::value);
+    static_assert(!std::is_same<_PartitionScheme, PartitionScheme::DutchFlag>::value);
+}
+
+}  // namespace detail
+
+/**
+ * @brief quick sort algorithm
+ *
+ * @details Uses introsort if the iterator is a random access iterator.
+ * Introsort uses insertion sort once the range gets small, and if the recursion depth
+ * becomes more than 2*log2(n) it uses heapsort.
+ * A random pivot is used for the partitioning if the iterator is a random access iterator.
+ * The last element is used as pivot if the iterator is a bidirectional iterator.
+ *
+ * @param first a bidirectional iterator
+ * @param last a bidirectional iterator
+ * @param compare a comparison functor
+ * @param scheme a partition scheme identifier
+ */
+template <class BidirectionalIterator, class Compare, class PartitionScheme>
+inline void quick_sort(BidirectionalIterator first, 
+                       BidirectionalIterator last, 
+                       Compare compare, 
+                       PartitionScheme scheme) {
+    using iter_category = typename std::iterator_traits<BidirectionalIterator>::iterator_category;
+    return detail::quick_sort_impl(first, last, compare, iter_category{}, scheme);
+}
+
+template <class BidirectionalIterator, class PartitionScheme>
+inline void quick_sort(BidirectionalIterator first, BidirectionalIterator last, PartitionScheme scheme) {
+    using value_type = typename std::iterator_traits<BidirectionalIterator>::value_type;
+    quick_sort(first, last, std::less<value_type>(), scheme);
+}
+
+template <class BidirectionalIterator>
+inline void quick_sort(BidirectionalIterator first, BidirectionalIterator last) {
+    using value_type = typename std::iterator_traits<BidirectionalIterator>::value_type;
+    quick_sort(first, last, std::less<value_type>(), PartitionScheme::Lomuto());
+}
+
+}  // namespace extra
 
 #endif  // SORT_HPP
